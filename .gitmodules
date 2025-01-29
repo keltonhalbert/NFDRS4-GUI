@@ -1,0 +1,10 @@
+[submodule "external/NFDRS4"]
+	path = external/NFDRS4
+	url = git@github.com:keltonhalbert/NFDRS4.git
+[submodule "external/imgui"]
+	path = external/imgui
+	url = https://github.com/ocornut/imgui
+	branch = docking
+[submodule "external/implot"]
+	path = external/implot
+	url = git@github.com:epezent/implot.git
