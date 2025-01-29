@@ -1,6 +1,9 @@
 #include <NFDRSGUI/NFDRSGUI.h>
+#include <deadfuelmoisture.h>
+#include <nfdrs4.h>
 
 #include <cstddef>
+#include <memory>
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -63,6 +66,16 @@ void MainApp::RenderLoop() {
     ImGuiStyle& style = ImGui::GetStyle();
     static bool show_imgui_demo = false;
     static bool show_helpmarkers = false;
+
+    // Dead Fuel Moisture models
+    std::unique_ptr<DeadFuelMoisture> dfm_1hour =
+        std::make_unique<DeadFuelMoisture>(0.20, "1-hour");
+    std::unique_ptr<DeadFuelMoisture> dfm_10hour =
+        std::make_unique<DeadFuelMoisture>(0.64, "10-hour");
+    std::unique_ptr<DeadFuelMoisture> dfm_100hour =
+        std::make_unique<DeadFuelMoisture>(2.0, "100-hour");
+    std::unique_ptr<DeadFuelMoisture> dfm_1000hour =
+        std::make_unique<DeadFuelMoisture>(6.40, "1000-hour");
 
     ImGuiID dockspace_id, dock_main_id, dock_id_hodo, dock_id_vert_1,
         dock_id_vert_2, dock_id_small_1, dock_id_small_2, dock_id_small_3,
