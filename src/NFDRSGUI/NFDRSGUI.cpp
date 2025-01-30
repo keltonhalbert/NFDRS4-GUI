@@ -1,4 +1,5 @@
 #include <NFDRSGUI/NFDRSGUI.h>
+#include <NFDRSGUI/data.h>
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
 
@@ -145,50 +146,11 @@ void MainApp::RenderLoop() {
             // split the main window into the top and bottom portions of the
             // frame, with the SkewT and Hodograph in the top half and the
             // bottom inset bar in the lower half
-            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.75f,
+            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.25f,
                                         &dock_main_id, &dock_id_bottom_1);
-            // Split the upper half into the SkewT and Hodograph portions
-            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.6f,
-                                        &dock_main_id, &dock_id_hodo);
-            // Split the SkewT so tha tthe two vertical plots sit next to
-            // it on the right...
-            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.85f,
-                                        &dock_main_id, &dock_id_vert_1);
-            // Split up the new vertical plot into two...
-            ImGui::DockBuilderSplitNode(dock_id_vert_1, ImGuiDir_Left, 0.5f,
-                                        &dock_id_vert_1, &dock_id_vert_2);
-            // Now split the hodograph into the main hodograph window and
-            // the small inset bar
-            ImGui::DockBuilderSplitNode(dock_id_hodo, ImGuiDir_Up, 0.85f,
-                                        &dock_id_hodo, &dock_id_small_1);
-            // Now split the small inset bar into 4 equal pieces
-            ImGui::DockBuilderSplitNode(dock_id_small_1, ImGuiDir_Left, 0.5f,
-                                        &dock_id_small_1, &dock_id_small_4);
-            ImGui::DockBuilderSplitNode(dock_id_small_1, ImGuiDir_Left, 0.5f,
-                                        &dock_id_small_1, &dock_id_small_2);
-            ImGui::DockBuilderSplitNode(dock_id_small_4, ImGuiDir_Right, 0.5f,
-                                        &dock_id_small_4, &dock_id_small_3);
-            // Finally, split the bottom inset bar into 4 pieces
-            ImGui::DockBuilderSplitNode(dock_id_bottom_1, ImGuiDir_Left, 0.5f,
-                                        &dock_id_bottom_1, &dock_id_bottom_4);
-            ImGui::DockBuilderSplitNode(dock_id_bottom_1, ImGuiDir_Left, 0.5f,
-                                        &dock_id_bottom_1, &dock_id_bottom_2);
-            ImGui::DockBuilderSplitNode(dock_id_bottom_4, ImGuiDir_Right, 0.5f,
-                                        &dock_id_bottom_4, &dock_id_bottom_3);
 
             ImGui::DockBuilderDockWindow("SkewT", dock_main_id);
             ImGui::DockBuilderDockWindow("Insets Bar", dock_id_bottom_1);
-            ImGui::DockBuilderDockWindow("Hodo", dock_id_hodo);
-            ImGui::DockBuilderDockWindow("Vert1", dock_id_vert_1);
-            ImGui::DockBuilderDockWindow("Vert2", dock_id_vert_2);
-            ImGui::DockBuilderDockWindow("Small1", dock_id_small_1);
-            ImGui::DockBuilderDockWindow("Small2", dock_id_small_2);
-            ImGui::DockBuilderDockWindow("Small3", dock_id_small_3);
-            ImGui::DockBuilderDockWindow("Small4", dock_id_small_4);
-            ImGui::DockBuilderDockWindow("Bottom1", dock_id_bottom_1);
-            ImGui::DockBuilderDockWindow("Bottom2", dock_id_bottom_2);
-            ImGui::DockBuilderDockWindow("Bottom3", dock_id_bottom_3);
-            ImGui::DockBuilderDockWindow("Bottom4", dock_id_bottom_4);
 
             ImGui::DockBuilderFinish(dockspace_id);
         }
@@ -203,62 +165,8 @@ void MainApp::RenderLoop() {
         ImGui::End();
         ImGui::PopStyleVar();
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::SetNextWindowDockID(dock_id_hodo, ImGuiCond_Once);
-        if (ImGui::Begin("Hodo", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-        ImGui::PopStyleVar();
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::SetNextWindowDockID(dock_id_vert_1, ImGuiCond_Once);
-        if (ImGui::Begin("WSPD v PRES", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-        ImGui::PopStyleVar();
-
-        ImGui::SetNextWindowDockID(dock_id_vert_2, ImGuiCond_Once);
-        if (ImGui::Begin("Vert2", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
-        ImGui::SetNextWindowDockID(dock_id_small_1, ImGuiCond_Once);
-        if (ImGui::Begin("Small1", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
-        ImGui::SetNextWindowDockID(dock_id_small_2, ImGuiCond_Once);
-        if (ImGui::Begin("Small2", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
-        ImGui::SetNextWindowDockID(dock_id_small_3, ImGuiCond_Once);
-        if (ImGui::Begin("Small3", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
-        ImGui::SetNextWindowDockID(dock_id_small_4, ImGuiCond_Once);
-        if (ImGui::Begin("Small4", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
         ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);
         if (ImGui::Begin("Bottom1", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
-        ImGui::SetNextWindowDockID(dock_id_bottom_2, ImGuiCond_Once);
-        if (ImGui::Begin("Bottom2", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
-        ImGui::SetNextWindowDockID(dock_id_bottom_3, ImGuiCond_Once);
-        if (ImGui::Begin("Bottom3", nullptr, m_window_flags)) {
-        }
-        ImGui::End();
-
-        ImGui::SetNextWindowDockID(dock_id_bottom_4, ImGuiCond_Once);
-        if (ImGui::Begin("Bottom4", nullptr, m_window_flags)) {
         }
         ImGui::End();
 
