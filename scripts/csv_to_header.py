@@ -8,13 +8,13 @@ def main():
     header_start_str = "#ifndef NFDRS4_TEST_DATA\n#define NFDRS4_TEST_DATA\n"
     header_end_str = "\n#endif\n"
     size_str = f"constexpr int N = {df['RELH'].shape[0]};\n"
-    relh_str = "constexpr float relh[] = {"
-    tmpc_str = "constexpr float tmpc[] = {"
-    wspd_str = "constexpr float wspd[] = {"
-    wdir_str = "constexpr float wdir[] = {"
-    rain_str = "constexpr float rain[] = {"
-    pres_str = "constexpr float pres[] = {"
-    srad_str = "constexpr float srad[] = {"
+    relh_str = "constexpr double relh[] = {"
+    tmpc_str = "constexpr double tmpc[] = {"
+    wspd_str = "constexpr double wspd[] = {"
+    wdir_str = "constexpr double wdir[] = {"
+    rain_str = "constexpr double rain[] = {"
+    pres_str = "constexpr double pres[] = {"
+    srad_str = "constexpr double srad[] = {"
 
     relh_str += ','.join(f"{val}f" for val in df['RELH'])
     tmpc_str += ','.join(f"{val}f" for val in df['TAIR'])
