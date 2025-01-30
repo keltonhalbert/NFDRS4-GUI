@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <cstddef>
 
 #ifdef __EMSCRIPTEN__
 #include "emscripten_loop.h"
@@ -18,6 +19,9 @@
 #include <GLFW/glfw3.h>  // Will drag system OpenGL headers
 
 namespace nfdrs {
+
+void meteogram(const double timestamp[], const double tmpc[],
+               const double relh[], std::ptrdiff_t N);
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
