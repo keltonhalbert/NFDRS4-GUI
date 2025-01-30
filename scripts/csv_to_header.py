@@ -10,7 +10,7 @@ def main():
     header_start_str += "#include <cstdint>\n"
     header_end_str = "\n#endif\n"
     size_str = f"constexpr int N = {df['RELH'].shape[0]};\n"
-    time_str = "constexpr int64_t time[] = {"
+    time_str = "constexpr double timestamp[] = {"
     relh_str = "constexpr double relh[] = {"
     tmpc_str = "constexpr double tmpc[] = {"
     wspd_str = "constexpr double wspd[] = {"
@@ -19,14 +19,14 @@ def main():
     pres_str = "constexpr double pres[] = {"
     srad_str = "constexpr double srad[] = {"
 
-    time_str += ','.join(f"{int(val)}" for val in df['DateTime'])
-    relh_str += ','.join(f"{val}f" for val in df['RELH'])
-    tmpc_str += ','.join(f"{val}f" for val in df['TAIR'])
-    wspd_str += ','.join(f"{val}f" for val in df['WSPD'])
-    wdir_str += ','.join(f"{val}f" for val in df['WDIR'])
-    rain_str += ','.join(f"{val}f" for val in df['RAIN'])
-    pres_str += ','.join(f"{val}f" for val in df['PRES'])
-    srad_str += ','.join(f"{val}f" for val in df['SRAD'])
+    time_str += ','.join(f"{val}" for val in df['DateTime'])
+    relh_str += ','.join(f"{val}" for val in df['RELH'])
+    tmpc_str += ','.join(f"{val}" for val in df['TAIR'])
+    wspd_str += ','.join(f"{val}" for val in df['WSPD'])
+    wdir_str += ','.join(f"{val}" for val in df['WDIR'])
+    rain_str += ','.join(f"{val}" for val in df['RAIN'])
+    pres_str += ','.join(f"{val}" for val in df['PRES'])
+    srad_str += ','.join(f"{val}" for val in df['SRAD'])
 
     time_str += "};\n"
     relh_str += "};\n"
@@ -39,8 +39,8 @@ def main():
 
     with open("../include/NFDRSGUI/data.h", 'w') as outfile:
         outfile.write(header_start_str)
-        outfile.write(time_str)
         outfile.write(size_str)
+        outfile.write(time_str)
         outfile.write(relh_str)
         outfile.write(tmpc_str)
         outfile.write(wspd_str)
