@@ -23,7 +23,7 @@ namespace nfdrs {
 void meteogram(const double timestamp[], const double tmpc[],
                const double relh[], const double wspd[], const double wdir[],
                const double gust[], const double precip[], const double srad[],
-               std::ptrdiff_t N);
+               const int firewx_cat[], std::ptrdiff_t N);
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);

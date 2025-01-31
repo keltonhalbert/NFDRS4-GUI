@@ -60,6 +60,29 @@ bool ShallIdleThisFrame_Emscripten(FPSIdling& idling) {
     return shallIdleThisFrame;
 }
 
+int spc_fire_cat(double tair, double relh, double wspd) {
+    // Elevated -- 15 MPH
+    int spc_cat = 0;
+    if ((wspd >= 6.7056) && (relh <= 25) && (tair >= 7.2222)) {
+        spc_cat = 1;
+    }
+    if ((wspd >= 8.9408) && (relh <= 20) && (tair >= 10)) {
+        spc_cat = 2;
+    }
+    if ((wspd >= 13.4112) && (relh <= 15) && (tair >= 15.5556)) {
+        spc_cat = 3;
+    }
+
+    return spc_cat;
+}
+
+void firewx_category(Meteogram& met_data) {
+    for (std::ptrdiff_t idx = 0; idx < met_data.N; ++idx) {
+        met_data.firewx_cat[idx] = spc_fire_cat(
+            met_data.tmpc[idx], met_data.relh[idx], met_data.wspd[idx]);
+    }
+}
+
 void MainApp::RenderLoop() {
     // Main loop
     ImGuiIO& io = ImGui::GetIO();
@@ -67,7 +90,8 @@ void MainApp::RenderLoop() {
     static bool show_imgui_demo = false;
     static bool show_helpmarkers = false;
 
-    static const Meteogram met_data;
+    static Meteogram met_data;
+    firewx_category(met_data);
 
     // Dead Fuel Moisture models
     std::unique_ptr<DeadFuelMoisture> dfm_1hour =
@@ -164,7 +188,8 @@ void MainApp::RenderLoop() {
         if (ImGui::Begin("Station Meteogram", nullptr, m_window_flags)) {
             meteogram(met_data.timestamp, met_data.tmpc, met_data.relh,
                       met_data.wspd, met_data.wdir, met_data.gust,
-                      met_data.rain, met_data.srad, met_data.N);
+                      met_data.rain, met_data.srad, met_data.firewx_cat,
+                      met_data.N);
         }
         ImGui::End();
         ImGui::PopStyleVar();
