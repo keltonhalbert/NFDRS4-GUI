@@ -67,6 +67,8 @@ void MainApp::RenderLoop() {
     static bool show_imgui_demo = false;
     static bool show_helpmarkers = false;
 
+    static const Meteogram met_data;
+
     // Dead Fuel Moisture models
     std::unique_ptr<DeadFuelMoisture> dfm_1hour =
         std::make_unique<DeadFuelMoisture>(0.20, "1-hour");
@@ -160,7 +162,9 @@ void MainApp::RenderLoop() {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, m_window_flags)) {
-            meteogram(timestamp, tmpc, relh, wspd, wdir, gust, rain, srad, N);
+            meteogram(met_data.timestamp, met_data.tmpc, met_data.relh,
+                      met_data.wspd, met_data.wdir, met_data.gust,
+                      met_data.rain, met_data.srad, met_data.N);
         }
         ImGui::End();
         ImGui::PopStyleVar();
