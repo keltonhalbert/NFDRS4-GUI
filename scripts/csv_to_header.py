@@ -22,7 +22,7 @@ def main():
     rain_str = "static constexpr double rain[] = {"
     pres_str = "static constexpr double pres[] = {"
     srad_str = "static constexpr double srad[] = {"
-    firewx_str = f"int firewx_cat[N];\n"
+    firewx_str = "int firewx_cat[N] = {"
 
     time_str += ','.join(f"{val}" for val in df['DateTime'])
     relh_str += ','.join(f"{val}" for val in df['RELH'])
@@ -33,6 +33,7 @@ def main():
     rain_str += ','.join(f"{val}" for val in df['RAIN'])
     pres_str += ','.join(f"{val}" for val in df['PRES'])
     srad_str += ','.join(f"{val}" for val in df['SRAD'])
+    firewx_str += ','.join(f"{val}" for val in np.zeros(df["RELH"].shape[0], dtype=int))
 
     time_str += "};\n"
     relh_str += "};\n"
@@ -43,6 +44,7 @@ def main():
     rain_str += "};\n"
     pres_str += "};\n"
     srad_str += "};\n"
+    firewx_str += "};\n"
 
     with open("../include/NFDRSGUI/data.h", 'w') as outfile:
         outfile.write(header_start_str)
