@@ -5,19 +5,23 @@ def main():
 
     df = pd.read_csv("../data/2024-03-CHEY-firewx.csv", parse_dates=["DateTime"])
     df["DateTime"] = df["DateTime"].astype('int').div(10**9)
+    df["WMAX"] = np.around(df["WMAX"], decimals=2)
 
     header_start_str = "#ifndef NFDRS4_TEST_DATA\n#define NFDRS4_TEST_DATA\n"
     header_end_str = "\n#endif\n"
-    size_str = f"constexpr int N = {df['RELH'].shape[0]};\n"
-    time_str = "constexpr double timestamp[] = {"
-    relh_str = "constexpr double relh[] = {"
-    tmpc_str = "constexpr double tmpc[] = {"
-    wspd_str = "constexpr double wspd[] = {"
-    wdir_str = "constexpr double wdir[] = {"
-    gust_str = "constexpr double gust[] = {"
-    rain_str = "constexpr double rain[] = {"
-    pres_str = "constexpr double pres[] = {"
-    srad_str = "constexpr double srad[] = {"
+
+    struct_start_str = "struct Meteogram {\n"
+    struct_end_str = "};\n"
+    size_str = f"static constexpr int N = {df['RELH'].shape[0]};\n"
+    time_str = "static constexpr double timestamp[] = {"
+    relh_str = "static constexpr double relh[] = {"
+    tmpc_str = "static constexpr double tmpc[] = {"
+    wspd_str = "static constexpr double wspd[] = {"
+    wdir_str = "static constexpr double wdir[] = {"
+    gust_str = "static constexpr double gust[] = {"
+    rain_str = "static constexpr double rain[] = {"
+    pres_str = "static constexpr double pres[] = {"
+    srad_str = "static constexpr double srad[] = {"
 
     time_str += ','.join(f"{val}" for val in df['DateTime'])
     relh_str += ','.join(f"{val}" for val in df['RELH'])
@@ -41,6 +45,7 @@ def main():
 
     with open("../include/NFDRSGUI/data.h", 'w') as outfile:
         outfile.write(header_start_str)
+        outfile.write(struct_start_str)
         outfile.write(size_str)
         outfile.write(time_str)
         outfile.write(relh_str)
@@ -51,6 +56,7 @@ def main():
         outfile.write(rain_str)
         outfile.write(pres_str)
         outfile.write(srad_str)
+        outfile.write(struct_end_str)
         outfile.write(header_end_str)
 
 
