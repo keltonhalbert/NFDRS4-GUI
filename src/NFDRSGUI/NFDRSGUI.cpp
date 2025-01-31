@@ -3,7 +3,6 @@
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
 
-#include <cstddef>
 #include <memory>
 
 #include "imgui.h"
@@ -146,7 +145,7 @@ void MainApp::RenderLoop() {
             // split the main window into the top and bottom portions of the
             // frame, with the SkewT and Hodograph in the top half and the
             // bottom inset bar in the lower half
-            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.30f,
+            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.50f,
                                         &dock_main_id, &dock_id_bottom_1);
 
             ImGui::DockBuilderDockWindow("SkewT", dock_main_id);
@@ -161,7 +160,7 @@ void MainApp::RenderLoop() {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, m_window_flags)) {
-            meteogram(timestamp, tmpc, relh, N);
+            meteogram(timestamp, tmpc, relh, wspd, wdir, gust, rain, srad, N);
         }
         ImGui::End();
         ImGui::PopStyleVar();
