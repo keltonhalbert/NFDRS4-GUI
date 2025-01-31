@@ -7,7 +7,6 @@ def main():
     df["DateTime"] = df["DateTime"].astype('int').div(10**9)
 
     header_start_str = "#ifndef NFDRS4_TEST_DATA\n#define NFDRS4_TEST_DATA\n"
-    header_start_str += "#include <cstdint>\n"
     header_end_str = "\n#endif\n"
     size_str = f"constexpr int N = {df['RELH'].shape[0]};\n"
     time_str = "constexpr double timestamp[] = {"
@@ -15,6 +14,7 @@ def main():
     tmpc_str = "constexpr double tmpc[] = {"
     wspd_str = "constexpr double wspd[] = {"
     wdir_str = "constexpr double wdir[] = {"
+    gust_str = "constexpr double gust[] = {"
     rain_str = "constexpr double rain[] = {"
     pres_str = "constexpr double pres[] = {"
     srad_str = "constexpr double srad[] = {"
@@ -24,6 +24,7 @@ def main():
     tmpc_str += ','.join(f"{val}" for val in df['TAIR'])
     wspd_str += ','.join(f"{val}" for val in df['WSPD'])
     wdir_str += ','.join(f"{val}" for val in df['WDIR'])
+    gust_str += ','.join(f"{val}" for val in df['WMAX'])
     rain_str += ','.join(f"{val}" for val in df['RAIN'])
     pres_str += ','.join(f"{val}" for val in df['PRES'])
     srad_str += ','.join(f"{val}" for val in df['SRAD'])
@@ -33,6 +34,7 @@ def main():
     tmpc_str += "};\n"
     wspd_str += "};\n"
     wdir_str += "};\n"
+    gust_str += "};\n"
     rain_str += "};\n"
     pres_str += "};\n"
     srad_str += "};\n"
@@ -45,6 +47,7 @@ def main():
         outfile.write(tmpc_str)
         outfile.write(wspd_str)
         outfile.write(wdir_str)
+        outfile.write(gust_str)
         outfile.write(rain_str)
         outfile.write(pres_str)
         outfile.write(srad_str)
