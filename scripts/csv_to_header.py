@@ -22,6 +22,7 @@ def main():
     rain_str = "static constexpr double rain[] = {"
     pres_str = "static constexpr double pres[] = {"
     srad_str = "static constexpr double srad[] = {"
+    firewx_str = f"int firewx_cat[N];\n"
 
     time_str += ','.join(f"{val}" for val in df['DateTime'])
     relh_str += ','.join(f"{val}" for val in df['RELH'])
@@ -56,6 +57,7 @@ def main():
         outfile.write(rain_str)
         outfile.write(pres_str)
         outfile.write(srad_str)
+        outfile.write(firewx_str)
         outfile.write(struct_end_str)
         outfile.write(header_end_str)
 
