@@ -83,6 +83,18 @@ void firewx_category(Meteogram& met_data) {
     }
 }
 
+void calc_dfm(const Meteogram& met_data, DeadFuelMoisture* dfm,
+              double radial_moisture[]) {
+    for (int i = 0; i < met_data.N; ++i) {
+        double et = 60.0 * 60.0;
+        double at = met_data.tmpc[i];
+        double rh = met_data.relh[i] / 100.0;
+        double sW = met_data.srad[i];
+        bool ret = dfm->update(et, at, rh, sW, 0.0218, true);
+        radial_moisture[i] = dfm->medianRadialMoisture() * 100.0;
+    }
+}
+
 void MainApp::RenderLoop() {
     // Main loop
     ImGuiIO& io = ImGui::GetIO();
@@ -91,6 +103,10 @@ void MainApp::RenderLoop() {
     static bool show_helpmarkers = false;
 
     static Meteogram met_data;
+    static double mean_radial_moisture_1h[met_data.N];
+    static double mean_radial_moisture_10h[met_data.N];
+    static double mean_radial_moisture_100h[met_data.N];
+    static double mean_radial_moisture_1000h[met_data.N];
     firewx_category(met_data);
 
     // Dead Fuel Moisture models
@@ -102,6 +118,13 @@ void MainApp::RenderLoop() {
         std::make_unique<DeadFuelMoisture>(2.0, "100-hour");
     std::unique_ptr<DeadFuelMoisture> dfm_1000hour =
         std::make_unique<DeadFuelMoisture>(6.40, "1000-hour");
+
+    printf("Calculating...\n");
+    calc_dfm(met_data, dfm_1hour.get(), mean_radial_moisture_1h);
+    calc_dfm(met_data, dfm_10hour.get(), mean_radial_moisture_10h);
+    calc_dfm(met_data, dfm_100hour.get(), mean_radial_moisture_100h);
+    calc_dfm(met_data, dfm_1000hour.get(), mean_radial_moisture_1000h);
+    printf("Done!\n");
 
     ImGuiID dockspace_id, dock_main_id, dock_id_hodo, dock_id_vert_1,
         dock_id_vert_2, dock_id_small_1, dock_id_small_2, dock_id_small_3,
@@ -196,6 +219,10 @@ void MainApp::RenderLoop() {
 
         ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);
         if (ImGui::Begin("Bottom1", nullptr, m_window_flags)) {
+            fuel_moisture_timeseries(
+                met_data.timestamp, mean_radial_moisture_1h,
+                mean_radial_moisture_10h, mean_radial_moisture_100h,
+                mean_radial_moisture_1000h, met_data.N);
         }
         ImGui::End();
 
