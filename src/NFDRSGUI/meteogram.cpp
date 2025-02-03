@@ -271,7 +271,7 @@ void meteogram(const double stime[], const double tmpc[], const double relh[],
     const auto window_size = ImGui::GetWindowSize();
     const int rows = 3;
     const int cols = 1;
-    if (ImPlot::BeginSubplots("Station Meteogram", rows, cols, window_size,
+    if (ImPlot::BeginSubplots("Station Meteogram", rows, cols, {-1, -1},
                               ImPlotSubplotFlags_LinkAllX)) {
         temperature_and_humidity(stime, tmpc, relh, firewx_cat, N);
         surface_winds(stime, wspd, wdir, gust, firewx_cat, N);

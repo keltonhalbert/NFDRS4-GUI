@@ -10,8 +10,7 @@ namespace nfdrs {
 static void humidity(const double stime[], const double dfm_1h[],
                      const double dfm_10h[], const double dfm_100h[],
                      const double dfm_1000h[], std::ptrdiff_t N) {
-    const auto window_size = ImGui::GetWindowSize();
-    if (ImPlot::BeginPlot("Fuel Moisture", window_size)) {
+    if (ImPlot::BeginPlot("Fuel Moisture")) {
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
@@ -49,15 +48,16 @@ void fuel_moisture_timeseries(const double stime[], const double dfm_1h[],
                               const double dfm_10h[], const double dfm_100h[],
                               const double dfm_1000h[], std::ptrdiff_t N) {
     /*const auto window_size = ImGui::GetWindowSize();*/
-    /*const int rows = 1;*/
-    /*const int cols = 1;*/
-    /*if (ImPlot::BeginSubplots("Dead Fuel Meteogram", rows, cols,
-     * window_size,*/
-    /*                          ImPlotSubplotFlags_LinkAllX)) {*/
-    humidity(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, N);
+    const int rows = 3;
+    const int cols = 1;
+    if (ImPlot::BeginSubplots("Dead Fuel Meteogram", rows, cols, {-1, -1},
+                              ImPlotSubplotFlags_LinkAllX)) {
+        humidity(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, N);
+        humidity(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, N);
+        humidity(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, N);
 
-    /*    ImPlot::EndSubplots();*/
-    /*}*/
+        ImPlot::EndSubplots();
+    }
 }
 
 }  // namespace nfdrs

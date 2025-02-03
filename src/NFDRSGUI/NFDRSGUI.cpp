@@ -3,7 +3,9 @@
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
 
+#include <atomic>
 #include <memory>
+#include <thread>
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -84,7 +86,7 @@ void firewx_category(Meteogram& met_data) {
 }
 
 void calc_dfm(const Meteogram& met_data, DeadFuelMoisture* dfm,
-              double radial_moisture[]) {
+              double radial_moisture[], std::atomic<int>& progress) {
     for (int i = 0; i < met_data.N; ++i) {
         double et = 60.0 * 60.0;
         double at = met_data.tmpc[i];
@@ -92,6 +94,7 @@ void calc_dfm(const Meteogram& met_data, DeadFuelMoisture* dfm,
         double sW = met_data.srad[i];
         bool ret = dfm->update(et, at, rh, sW, 0.0218, true);
         radial_moisture[i] = dfm->medianRadialMoisture() * 100.0;
+        progress.store(100 * i / met_data.N);
     }
 }
 
@@ -109,6 +112,8 @@ void MainApp::RenderLoop() {
     static double mean_radial_moisture_1000h[met_data.N];
     firewx_category(met_data);
 
+    std::atomic<int> progress = 0;
+
     // Dead Fuel Moisture models
     std::unique_ptr<DeadFuelMoisture> dfm_1hour =
         std::make_unique<DeadFuelMoisture>(0.20, "1-hour");
@@ -120,16 +125,21 @@ void MainApp::RenderLoop() {
         std::make_unique<DeadFuelMoisture>(6.40, "1000-hour");
 
     printf("Calculating...\n");
-    calc_dfm(met_data, dfm_1hour.get(), mean_radial_moisture_1h);
-    calc_dfm(met_data, dfm_10hour.get(), mean_radial_moisture_10h);
-    calc_dfm(met_data, dfm_100hour.get(), mean_radial_moisture_100h);
-    calc_dfm(met_data, dfm_1000hour.get(), mean_radial_moisture_1000h);
+    std::thread th_dfm1(calc_dfm, met_data, dfm_1hour.get(),
+                        mean_radial_moisture_1h, std::ref(progress));
+    std::thread th_dfm10(calc_dfm, met_data, dfm_10hour.get(),
+                         mean_radial_moisture_10h, std::ref(progress));
+    std::thread th_dfm100(calc_dfm, met_data, dfm_100hour.get(),
+                          mean_radial_moisture_100h, std::ref(progress));
+    std::thread th_dfm1000(calc_dfm, met_data, dfm_1000hour.get(),
+                           mean_radial_moisture_1000h, std::ref(progress));
+    th_dfm1.join();
+    th_dfm10.join();
+    th_dfm100.join();
+    th_dfm1000.join();
     printf("Done!\n");
 
-    ImGuiID dockspace_id, dock_main_id, dock_id_hodo, dock_id_vert_1,
-        dock_id_vert_2, dock_id_small_1, dock_id_small_2, dock_id_small_3,
-        dock_id_small_4, dock_id_bottom_1, dock_id_bottom_2, dock_id_bottom_3,
-        dock_id_bottom_4;
+    ImGuiID dockspace_id, dock_main_id, dock_id_bottom_1, dock_id_models;
 
 #ifdef __EMSCRIPTEN__
     io.IniFilename = nullptr;
@@ -182,6 +192,12 @@ void MainApp::RenderLoop() {
                                 &show_helpmarkers);
                 ImGui::EndMenu();
             }
+            if (ImGui::BeginMenu("Configure & Run")) {
+                ImGui::MenuItem("Dead Fuel Moisture Model", nullptr);
+                ImGui::MenuItem("Live Fuel Moisture Model", nullptr);
+                ImGui::MenuItem("NFDRS4 Model", nullptr);
+                ImGui::EndMenu();
+            }
             ImGui::EndMainMenuBar();
         }
 
@@ -194,11 +210,15 @@ void MainApp::RenderLoop() {
             // split the main window into the top and bottom portions of the
             // frame, with the SkewT and Hodograph in the top half and the
             // bottom inset bar in the lower half
-            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.50f,
+            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.80f,
                                         &dock_main_id, &dock_id_bottom_1);
+            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.50f,
+                                        &dock_main_id, &dock_id_models);
 
-            ImGui::DockBuilderDockWindow("SkewT", dock_main_id);
-            ImGui::DockBuilderDockWindow("Insets Bar", dock_id_bottom_1);
+            ImGui::DockBuilderDockWindow("Meteograms", dock_main_id);
+            ImGui::DockBuilderDockWindow("NFDRS Models", dock_id_models);
+            ImGui::DockBuilderDockWindow("Model Configuration Bar",
+                                         dock_id_bottom_1);
 
             ImGui::DockBuilderFinish(dockspace_id);
         }
@@ -206,7 +226,8 @@ void MainApp::RenderLoop() {
             ImGui::ShowDemoWindow();
         }
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        /*ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f,
+         * 0.0f));*/
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, m_window_flags)) {
             meteogram(met_data.timestamp, met_data.tmpc, met_data.relh,
@@ -215,14 +236,21 @@ void MainApp::RenderLoop() {
                       met_data.N);
         }
         ImGui::End();
-        ImGui::PopStyleVar();
+        /*ImGui::PopStyleVar();*/
 
-        ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);
-        if (ImGui::Begin("Bottom1", nullptr, m_window_flags)) {
+        ImGui::SetNextWindowDockID(dock_id_models, ImGuiCond_Once);
+        if (ImGui::Begin("Insets Bar", nullptr, m_window_flags)) {
             fuel_moisture_timeseries(
                 met_data.timestamp, mean_radial_moisture_1h,
                 mean_radial_moisture_10h, mean_radial_moisture_100h,
                 mean_radial_moisture_1000h, met_data.N);
+            /*ImGui::ProgressBar(progress.load(), ImVec2(0.0f, 0.0f));*/
+        }
+        ImGui::End();
+
+        ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);
+        if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {
+            // pass
         }
         ImGui::End();
 
