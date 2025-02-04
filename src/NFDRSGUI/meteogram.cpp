@@ -228,7 +228,7 @@ static void solar_radiation_and_precip(const double stime[],
         ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 100, 1200);
 
         // Set up a shared Y axis for rainfall
-        ImPlot::SetupAxis(ImAxis_Y2, "Accum Rainfall (mm)",
+        ImPlot::SetupAxis(ImAxis_Y2, "Hourly Rainfall (mm)",
                           ImPlotAxisFlags_AuxDefault);
         ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 100);
         ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 600);

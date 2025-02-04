@@ -12,6 +12,7 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "utctime.h"
 namespace nfdrs {
 
 double ClockSeconds() {
@@ -94,13 +95,15 @@ void calc_dfm(const Meteogram& met_data, DeadFuelMoisture* dfm,
         double at = met_data.m_tair[i];
         double rh = met_data.m_relh[i] / 100.0;
         double sW = met_data.m_srad[i];
+        double rain = met_data.m_rain[i] * 10.0;
         tm time_data;
         ImPlotTime curtime = ImPlotTime::FromDouble(met_data.m_timestamp[i]);
         ImPlot::GetGmtTime(curtime, &time_data);
+
         bool ret =
             dfm->update(time_data.tm_year + 1900, time_data.tm_mon + 1,
                         time_data.tm_mday, time_data.tm_hour, time_data.tm_min,
-                        time_data.tm_sec, at, rh, sW, 0.0218, true);
+                        time_data.tm_sec, at, rh, sW, rain, 0.0218, true);
         radial_moisture[i] = dfm->medianRadialMoisture() * 100.0;
         progress.store(100 * i / met_data.N);
     }
