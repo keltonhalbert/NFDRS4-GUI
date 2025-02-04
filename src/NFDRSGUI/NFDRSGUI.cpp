@@ -1,3 +1,4 @@
+#include <NFDRSGUI/Meteogram.h>
 #include <NFDRSGUI/NFDRSGUI.h>
 #include <NFDRSGUI/data.h>
 #include <deadfuelmoisture.h>
@@ -81,19 +82,19 @@ int spc_fire_cat(double tair, double relh, double wspd) {
 
 void firewx_category(Meteogram& met_data) {
     for (std::ptrdiff_t idx = 0; idx < met_data.N; ++idx) {
-        met_data.firewx_cat[idx] = spc_fire_cat(
-            met_data.tmpc[idx], met_data.relh[idx], met_data.wspd[idx]);
+        met_data.m_firewx_cat[idx] = spc_fire_cat(
+            met_data.m_tair[idx], met_data.m_relh[idx], met_data.m_wspd[idx]);
     }
 }
 
 void calc_dfm(const Meteogram& met_data, DeadFuelMoisture* dfm,
               double radial_moisture[], std::atomic<int>& progress) {
     for (int i = 0; i < met_data.N; ++i) {
-        double at = met_data.tmpc[i];
-        double rh = met_data.relh[i] / 100.0;
-        double sW = met_data.srad[i];
+        double at = met_data.m_tair[i];
+        double rh = met_data.m_relh[i] / 100.0;
+        double sW = met_data.m_srad[i];
         tm time_data;
-        ImPlotTime curtime = ImPlotTime::FromDouble(met_data.timestamp[i]);
+        ImPlotTime curtime = ImPlotTime::FromDouble(met_data.m_timestamp[i]);
         ImPlot::GetGmtTime(curtime, &time_data);
         bool ret =
             dfm->update(time_data.tm_year + 1900, time_data.tm_mon + 1,
@@ -111,11 +112,12 @@ void MainApp::RenderLoop() {
     static bool show_imgui_demo = false;
     static bool show_helpmarkers = false;
 
-    static Meteogram met_data;
-    static double mean_radial_moisture_1h[met_data.N];
-    static double mean_radial_moisture_10h[met_data.N];
-    static double mean_radial_moisture_100h[met_data.N];
-    static double mean_radial_moisture_1000h[met_data.N];
+    static Meteogram met_data(timestamp, relh, tmpc, wspd, wdir, gust, rain,
+                              pres, srad, NSTATIC);
+    static double mean_radial_moisture_1h[NSTATIC];
+    static double mean_radial_moisture_10h[NSTATIC];
+    static double mean_radial_moisture_100h[NSTATIC];
+    static double mean_radial_moisture_1000h[NSTATIC];
     firewx_category(met_data);
 
     std::atomic<int> progress = 0;
@@ -131,13 +133,13 @@ void MainApp::RenderLoop() {
         std::make_unique<DeadFuelMoisture>(6.40, "1000-hour");
 
     printf("Calculating...\n");
-    std::thread th_dfm1(calc_dfm, met_data, dfm_1hour.get(),
+    std::thread th_dfm1(calc_dfm, std::ref(met_data), dfm_1hour.get(),
                         mean_radial_moisture_1h, std::ref(progress));
-    std::thread th_dfm10(calc_dfm, met_data, dfm_10hour.get(),
+    std::thread th_dfm10(calc_dfm, std::ref(met_data), dfm_10hour.get(),
                          mean_radial_moisture_10h, std::ref(progress));
-    std::thread th_dfm100(calc_dfm, met_data, dfm_100hour.get(),
+    std::thread th_dfm100(calc_dfm, std::ref(met_data), dfm_100hour.get(),
                           mean_radial_moisture_100h, std::ref(progress));
-    std::thread th_dfm1000(calc_dfm, met_data, dfm_1000hour.get(),
+    std::thread th_dfm1000(calc_dfm, std::ref(met_data), dfm_1000hour.get(),
                            mean_radial_moisture_1000h, std::ref(progress));
     th_dfm1.join();
     th_dfm10.join();
@@ -236,10 +238,11 @@ void MainApp::RenderLoop() {
          * 0.0f));*/
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, m_window_flags)) {
-            meteogram(met_data.timestamp, met_data.tmpc, met_data.relh,
-                      met_data.wspd, met_data.wdir, met_data.gust,
-                      met_data.rain, met_data.srad, met_data.firewx_cat,
-                      met_data.N);
+            meteogram(met_data.m_timestamp.get(), met_data.m_tair.get(),
+                      met_data.m_relh.get(), met_data.m_wspd.get(),
+                      met_data.m_wdir.get(), met_data.m_gust.get(),
+                      met_data.m_rain.get(), met_data.m_srad.get(),
+                      met_data.m_firewx_cat.get(), met_data.N);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/
@@ -247,7 +250,7 @@ void MainApp::RenderLoop() {
         ImGui::SetNextWindowDockID(dock_id_models, ImGuiCond_Once);
         if (ImGui::Begin("Insets Bar", nullptr, m_window_flags)) {
             fuel_moisture_timeseries(
-                met_data.timestamp, mean_radial_moisture_1h,
+                met_data.m_timestamp.get(), mean_radial_moisture_1h,
                 mean_radial_moisture_10h, mean_radial_moisture_100h,
                 mean_radial_moisture_1000h, met_data.N);
             /*ImGui::ProgressBar(progress.load(), ImVec2(0.0f, 0.0f));*/
