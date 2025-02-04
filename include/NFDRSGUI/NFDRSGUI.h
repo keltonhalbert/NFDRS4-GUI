@@ -23,7 +23,9 @@ namespace nfdrs {
 void meteogram(const double timestamp[], const double tmpc[],
                const double relh[], const double wspd[], const double wdir[],
                const double gust[], const double precip[], const double srad[],
-               const int firewx_cat[], std::ptrdiff_t N);
+               const int firewx_cat[], const double dfm_1h[],
+               const double dfm_10h[], const double dfm_100h[],
+               const double dfm_1000h[], std::ptrdiff_t N);
 
 void fuel_moisture_timeseries(const double stime[], const double dfm_1h[],
                               const double dfm_10h[], const double dfm_100h[],

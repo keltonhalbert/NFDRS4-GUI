@@ -223,11 +223,8 @@ void MainApp::RenderLoop() {
             // bottom inset bar in the lower half
             ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.80f,
                                         &dock_main_id, &dock_id_bottom_1);
-            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.50f,
-                                        &dock_main_id, &dock_id_models);
 
             ImGui::DockBuilderDockWindow("Meteograms", dock_main_id);
-            ImGui::DockBuilderDockWindow("NFDRS Models", dock_id_models);
             ImGui::DockBuilderDockWindow("Model Configuration Bar",
                                          dock_id_bottom_1);
 
@@ -245,20 +242,12 @@ void MainApp::RenderLoop() {
                       met_data.m_relh.get(), met_data.m_wspd.get(),
                       met_data.m_wdir.get(), met_data.m_gust.get(),
                       met_data.m_rain.get(), met_data.m_srad.get(),
-                      met_data.m_firewx_cat.get(), met_data.N);
+                      met_data.m_firewx_cat.get(), mean_radial_moisture_1h,
+                      mean_radial_moisture_10h, mean_radial_moisture_100h,
+                      mean_radial_moisture_1000h, met_data.N);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/
-
-        ImGui::SetNextWindowDockID(dock_id_models, ImGuiCond_Once);
-        if (ImGui::Begin("Insets Bar", nullptr, m_window_flags)) {
-            fuel_moisture_timeseries(
-                met_data.m_timestamp.get(), mean_radial_moisture_1h,
-                mean_radial_moisture_10h, mean_radial_moisture_100h,
-                mean_radial_moisture_1000h, met_data.N);
-            /*ImGui::ProgressBar(progress.load(), ImVec2(0.0f, 0.0f));*/
-        }
-        ImGui::End();
 
         ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);
         if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {
