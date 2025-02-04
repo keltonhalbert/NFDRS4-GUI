@@ -8,6 +8,9 @@ def main():
                      parse_dates=["DateTime"])
     df["DateTime"] = df["DateTime"].astype('int').div(10**9)
     df["WMAX"] = np.around(df["WMAX"], decimals=2)
+    # Go from accumulation since 00Z to 1-hour accum
+    df["RAIN"] = np.around(np.abs(df["RAIN"].diff(periods=1)), decimals=3)
+    df["RAIN"] = df["RAIN"].fillna(0)
 
     header_start_str = "#ifndef NFDRS4_TEST_DATA\n#define NFDRS4_TEST_DATA\n"
     header_end_str = "\n#endif\n"
