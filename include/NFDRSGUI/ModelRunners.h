@@ -8,9 +8,12 @@
 #include <memory>
 #include <thread>
 
-template <typename ModelType>
-struct AsyncModelRunner {
-    std::unique_ptr<ModelType> model;
+struct DeadFuelModelRunner {
+    std::unique_ptr<DeadFuelMoisture> model;
+
+    DeadFuelModelRunner(std::unique_ptr<DeadFuelMoisture>& in_model) {
+        model = std::move(in_model);
+    }
 };
 
 #endif
