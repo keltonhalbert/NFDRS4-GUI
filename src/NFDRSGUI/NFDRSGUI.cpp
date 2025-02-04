@@ -1,4 +1,5 @@
 #include <NFDRSGUI/Meteogram.h>
+#include <NFDRSGUI/ModelRunners.h>
 #include <NFDRSGUI/NFDRSGUI.h>
 #include <NFDRSGUI/data.h>
 #include <deadfuelmoisture.h>
@@ -146,6 +147,8 @@ void MainApp::RenderLoop() {
     th_dfm100.join();
     th_dfm1000.join();
     printf("Done!\n");
+
+    /*auto runner = DeadFuelModelRunner(dfm_1hour);*/
 
     ImGuiID dockspace_id, dock_main_id, dock_id_bottom_1, dock_id_models;
 
