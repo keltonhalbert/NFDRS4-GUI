@@ -4,6 +4,7 @@
 #include <nfdrs4.h>
 
 #include <atomic>
+#include <ctime>
 #include <memory>
 #include <thread>
 
@@ -88,11 +89,16 @@ void firewx_category(Meteogram& met_data) {
 void calc_dfm(const Meteogram& met_data, DeadFuelMoisture* dfm,
               double radial_moisture[], std::atomic<int>& progress) {
     for (int i = 0; i < met_data.N; ++i) {
-        double et = 60.0 * 60.0;
         double at = met_data.tmpc[i];
         double rh = met_data.relh[i] / 100.0;
         double sW = met_data.srad[i];
-        bool ret = dfm->update(et, at, rh, sW, 0.0218, true);
+        tm time_data;
+        ImPlotTime curtime = ImPlotTime::FromDouble(met_data.timestamp[i]);
+        ImPlot::GetGmtTime(curtime, &time_data);
+        bool ret =
+            dfm->update(time_data.tm_year + 1900, time_data.tm_mon + 1,
+                        time_data.tm_mday, time_data.tm_hour, time_data.tm_min,
+                        time_data.tm_sec, at, rh, sW, 0.0218, true);
         radial_moisture[i] = dfm->medianRadialMoisture() * 100.0;
         progress.store(100 * i / met_data.N);
     }
