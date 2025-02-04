@@ -230,9 +230,9 @@ static void solar_radiation_and_precip(const double stime[],
         // Set up a shared Y axis for rainfall
         ImPlot::SetupAxis(ImAxis_Y2, "Hourly Rainfall (mm)",
                           ImPlotAxisFlags_AuxDefault);
-        ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 100);
-        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 600);
-        ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 600);
+        ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 20);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 300);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 300);
 
         // Plot the fire-wx categories
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
