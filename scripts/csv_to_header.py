@@ -12,7 +12,7 @@ def main():
     header_start_str = "#ifndef NFDRS4_TEST_DATA\n#define NFDRS4_TEST_DATA\n"
     header_end_str = "\n#endif\n"
 
-    size_str = f"static constexpr int N = {df['RELH'].shape[0]};\n"
+    size_str = f"static constexpr int NSTATIC = {df['RELH'].shape[0]};\n"
     time_str = "static constexpr double timestamp[] = {"
     relh_str = "static constexpr double relh[] = {"
     tmpc_str = "static constexpr double tmpc[] = {"

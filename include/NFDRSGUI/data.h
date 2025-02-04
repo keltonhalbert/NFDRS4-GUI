@@ -1,6 +1,6 @@
 #ifndef NFDRS4_TEST_DATA
 #define NFDRS4_TEST_DATA
-static constexpr int N = 745;
+static constexpr int NSTATIC = 745;
 static constexpr double timestamp[] = {
     1709251200.0, 1709254800.0, 1709258400.0, 1709262000.0, 1709265600.0,
     1709269200.0, 1709272800.0, 1709276400.0, 1709280000.0, 1709283600.0,
