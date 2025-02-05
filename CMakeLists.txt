@@ -19,9 +19,8 @@ if(EMSCRIPTEN)
     # cannot use contrib.glfw3 prior to 3.1.57
     set(IMGUI_EMSCRIPTEN_GLFW3 "-sUSE_GLFW=3" CACHE STRING "Use -sUSE_GLFW=3 for GLFW implementation" FORCE)
   endif()
-  find_package(Threads REQUIRED)
-  set(LIBRARIES glfw NFDRS4 Threads::Threads)
-  add_compile_options(-pthread -sDISABLE_EXCEPTION_CATCHING=1 -DIMGUI_DISABLE_FILE_FUNCTIONS=1 -sUSE_PTHREADS=1 -sSHARED_MEMORY=1)
+  set(LIBRARIES glfw NFDRS4)
+  add_compile_options(-sDISABLE_EXCEPTION_CATCHING=1 -DIMGUI_DISABLE_FILE_FUNCTIONS=1 -sUSE_PTHREADS=1)
 else()
     set(OpenGL_GL_PREFERENCE "GLVND")
     find_package(OpenGL REQUIRED)
@@ -80,6 +79,11 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 # Emscripten settings
 if(EMSCRIPTEN)
+  if("${IMGUI_EMSCRIPTEN_GLFW3}" STREQUAL "--use-port=contrib.glfw3")
+      target_compile_options(NFDRSGUI PUBLIC
+      "${IMGUI_EMSCRIPTEN_GLFW3}"
+  )
+  endif()
   message(STATUS "Using ${IMGUI_EMSCRIPTEN_GLFW3} GLFW implementation")
   target_link_options(NFDRSGUI PRIVATE
     "${IMGUI_EMSCRIPTEN_GLFW3}"

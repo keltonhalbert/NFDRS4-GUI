@@ -12,7 +12,7 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "utctime.h"
+
 namespace nfdrs {
 
 double ClockSeconds() {
@@ -153,7 +153,7 @@ void MainApp::RenderLoop() {
 
     /*auto runner = DeadFuelModelRunner(dfm_1hour);*/
 
-    ImGuiID dockspace_id, dock_main_id, dock_id_bottom_1, dock_id_models;
+    ImGuiID dockspace_id, dock_main_id;
 
 #ifdef __EMSCRIPTEN__
     io.IniFilename = nullptr;
@@ -185,10 +185,12 @@ void MainApp::RenderLoop() {
 
         // Sleep if the window is minimized - don't do any unnecessary
         // computation or drawing!
+#ifndef __EMSCRIPTEN__
         if (glfwGetWindowAttrib(m_main_window, GLFW_ICONIFIED) != 0) {
             ImGui_ImplGlfw_Sleep(10);
             continue;
         }
+#endif
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -224,12 +226,12 @@ void MainApp::RenderLoop() {
             // split the main window into the top and bottom portions of the
             // frame, with the SkewT and Hodograph in the top half and the
             // bottom inset bar in the lower half
-            ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.80f,
-                                        &dock_main_id, &dock_id_bottom_1);
-
-            ImGui::DockBuilderDockWindow("Meteograms", dock_main_id);
-            ImGui::DockBuilderDockWindow("Model Configuration Bar",
-                                         dock_id_bottom_1);
+            /*ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.80f,*/
+            /*                            &dock_main_id, &dock_id_bottom_1);*/
+            /**/
+            /*ImGui::DockBuilderDockWindow("Meteograms", dock_main_id);*/
+            /*ImGui::DockBuilderDockWindow("Model Configuration Bar",*/
+            /*                             dock_id_bottom_1);*/
 
             ImGui::DockBuilderFinish(dockspace_id);
         }
@@ -252,11 +254,11 @@ void MainApp::RenderLoop() {
         ImGui::End();
         /*ImGui::PopStyleVar();*/
 
-        ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);
-        if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {
-            // pass
-        }
-        ImGui::End();
+        /*ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);*/
+        /*if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {*/
+        /*    // pass*/
+        /*}*/
+        /*ImGui::End();*/
 
         // 1. Show the big demo window (Most of the sample code is in
         // ImGui::ShowDemoWindow()! You can browse its code to learn more about
@@ -287,7 +289,9 @@ void MainApp::RenderLoop() {
             glfwMakeContextCurrent(backup_current_context);
         }
 
+#ifndef __EMSCRIPTEN__
         glfwSwapBuffers(m_main_window);
+#endif
     }
 #ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;
