@@ -19,8 +19,9 @@ if(EMSCRIPTEN)
     # cannot use contrib.glfw3 prior to 3.1.57
     set(IMGUI_EMSCRIPTEN_GLFW3 "-sUSE_GLFW=3" CACHE STRING "Use -sUSE_GLFW=3 for GLFW implementation" FORCE)
   endif()
-  set(LIBRARIES glfw NFDRS4)
-  add_compile_options(-sDISABLE_EXCEPTION_CATCHING=1 -DIMGUI_DISABLE_FILE_FUNCTIONS=1)
+  find_package(Threads REQUIRED)
+  set(LIBRARIES glfw NFDRS4 Threads::Threads)
+  add_compile_options(-pthread -sDISABLE_EXCEPTION_CATCHING=1 -DIMGUI_DISABLE_FILE_FUNCTIONS=1 -sUSE_PTHREADS=1 -sSHARED_MEMORY=1)
 else()
     set(OpenGL_GL_PREFERENCE "GLVND")
     find_package(OpenGL REQUIRED)
@@ -79,22 +80,19 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 # Emscripten settings
 if(EMSCRIPTEN)
-  if("${IMGUI_EMSCRIPTEN_GLFW3}" STREQUAL "--use-port=contrib.glfw3")
-      target_compile_options(NFDRSGUI PUBLIC
-        "${IMGUI_EMSCRIPTEN_GLFW3}"
-    )
-  endif()
   message(STATUS "Using ${IMGUI_EMSCRIPTEN_GLFW3} GLFW implementation")
   target_link_options(NFDRSGUI PRIVATE
-    "-sUSE_GLFW=3"
     "${IMGUI_EMSCRIPTEN_GLFW3}"
     "-sWASM=1"
+    "-sSHARED_MEMORY=1"
     "-sALLOW_MEMORY_GROWTH=1"
+    "-sSTACK_SIZE=2100000"
+    "-sUSE_PTHREADS=1"
+    "-sPTHREAD_POOL_SIZE=4"
     "-sNO_EXIT_RUNTIME=0"
     "-sASSERTIONS=1"
     "-sDISABLE_EXCEPTION_CATCHING=1"
     "-sNO_FILESYSTEM=1"
-    "-sSTACK_SIZE=2100000"
   )
   set_target_properties(NFDRSGUI PROPERTIES OUTPUT_NAME "index")
   # copy our custom index.html to build directory

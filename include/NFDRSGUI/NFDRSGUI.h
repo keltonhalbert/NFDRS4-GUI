@@ -134,6 +134,7 @@ class MainApp {
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;  // Enable Docking
         io.ConfigFlags |=
             ImGuiConfigFlags_ViewportsEnable;  // Enable Multi-Viewport /
+        io.BackendFlags |= ImGuiBackendFlags_RendererHasVtxOffset;
         // Platform Windows
         // io.ConfigViewportsNoAutoMerge = true;
         // io.ConfigViewportsNoTaskBarIcon = true;
