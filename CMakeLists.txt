@@ -10,6 +10,7 @@ include(GNUInstallDirs)
 set(IMGUI_DIR ./external/imgui)
 set(IMPLOT_DIR ./external/implot)
 set(NFDRS4_DIR ./external/NFDRS4)
+set(IMGUI_USER_CONF ${CMAKE_SOURCE_DIR}/include/NFDRSGUI/imgui_conf.h)
 
 # Libraries
 if(EMSCRIPTEN)
@@ -69,13 +70,13 @@ target_include_directories(NFDRSGUI PUBLIC
     ${IMGUI_DIR}
     ${IMPLOT_DIR}
     ${IMGUI_DIR}/backends
-    # ${NFDRS4_DIR}/lib/NFDRS4/include
     include
     )
 target_link_libraries(NFDRSGUI PUBLIC ${LIBRARIES})
 
 set_target_properties(NFDRSGUI PROPERTIES LINKER_LANGUAGE CXX)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+target_compile_definitions(NFDRSGUI PRIVATE IMGUI_USER_CONFIG="${IMGUI_USER_CONF}")
 
 # Emscripten settings
 if(EMSCRIPTEN)
