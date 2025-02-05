@@ -28,6 +28,11 @@ struct DeadFuelSettings {
 
 struct DeadFuelModelRunner {
     std::unique_ptr<DeadFuelMoisture> model;
+    DeadFuelSettings settings;
+
+    DeadFuelModelRunner(double radius, const char* name) {
+        model = std::make_unique<DeadFuelMoisture>(radius, name);
+    }
 
     DeadFuelModelRunner(std::unique_ptr<DeadFuelMoisture>& in_model) {
         model = std::move(in_model);
