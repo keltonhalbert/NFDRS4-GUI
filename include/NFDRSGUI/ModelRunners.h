@@ -48,14 +48,6 @@ struct DeadFuelModelRunner {
         fuel_temperature = std::make_unique<double[]>(size);
     }
 
-    DeadFuelModelRunner(std::unique_ptr<DeadFuelMoisture>& in_model,
-                        const Meteogram& data)
-        : size(data.N) {
-        model = std::move(in_model);
-        radial_moisture = std::make_unique<double[]>(size);
-        fuel_temperature = std::make_unique<double[]>(size);
-    }
-
     ~DeadFuelModelRunner() {
         if (process_thread.joinable()) process_thread.join();
     }
