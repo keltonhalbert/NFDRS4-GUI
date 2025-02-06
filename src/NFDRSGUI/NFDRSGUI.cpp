@@ -233,7 +233,11 @@ void MainApp::RenderLoop() {
                       dfm_1hour.radial_moisture.get(),
                       dfm_10hour.radial_moisture.get(),
                       dfm_100hour.radial_moisture.get(),
-                      dfm_1000hour.radial_moisture.get(), met_data.N);
+                      dfm_1000hour.radial_moisture.get(),
+                      dfm_1hour.fuel_temperature.get(),
+                      dfm_10hour.fuel_temperature.get(),
+                      dfm_100hour.fuel_temperature.get(),
+                      dfm_1000hour.fuel_temperature.get(), met_data.N);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/

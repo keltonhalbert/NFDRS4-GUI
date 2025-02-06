@@ -266,16 +266,18 @@ static void solar_radiation_and_precip(const double stime[],
 
 static void dead_fuel(const double stime[], const double dfm_1h[],
                       const double dfm_10h[], const double dfm_100h[],
-                      const double dfm_1000h[], std::ptrdiff_t N) {
+                      const double dfm_1000h[], const double dft_1h[],
+                      const double dft_10h[], const double dft_100h[],
+                      const double dft_1000h[], std::ptrdiff_t N) {
     if (ImPlot::BeginPlot("Fuel Moisture")) {
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
-        ImPlot::SetupAxes("UTC Time", "Humidity (%)");
+        ImPlot::SetupAxes("UTC Time", "deg C");
         // This first subplot should not have labels
         ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);
         ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
-        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 0, 100);
+        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 0, 35);
 
         // X-axis constraints
         ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, stime[0], stime[N - 1]);
@@ -283,17 +285,35 @@ static void dead_fuel(const double stime[], const double dfm_1h[],
                                          stime[N - 1] - stime[0]);
 
         // Y-axis constraints
-        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0, 100);
-        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 5, 100);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, -10, 50);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 5, 50);
+
+        // Set up a shared Y axis for relative humidity
+        ImPlot::SetupAxis(ImAxis_Y2, "Relative Humidity (%)",
+                          ImPlotAxisFlags_AuxDefault);
+        ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 100);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 100);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 100);
+
+        // Plot the Relative Humidity
+        ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
+        /*ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));*/
+        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
+        ImPlot::PlotLine("1h fm", stime, dfm_1h, N);
+        ImPlot::PlotLine("10h fm", stime, dfm_10h, N);
+        ImPlot::PlotLine("100h fm", stime, dfm_100h, N);
+        ImPlot::PlotLine("1000h fm", stime, dfm_1000h, N);
+        /*ImPlot::PopStyleColor();*/
+        ImPlot::PopStyleVar();
 
         // Plot the Relative Humidity
         ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
         /*ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));*/
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
-        ImPlot::PlotLine("1h", stime, dfm_1h, N);
-        ImPlot::PlotLine("10h", stime, dfm_10h, N);
-        ImPlot::PlotLine("100h", stime, dfm_100h, N);
-        ImPlot::PlotLine("1000h", stime, dfm_1000h, N);
+        ImPlot::PlotLine("1h ft", stime, dft_1h, N);
+        ImPlot::PlotLine("10h ft", stime, dft_10h, N);
+        ImPlot::PlotLine("100h ft", stime, dft_100h, N);
+        ImPlot::PlotLine("1000h ft", stime, dft_1000h, N);
         /*ImPlot::PopStyleColor();*/
         ImPlot::PopStyleVar();
 
@@ -306,7 +326,9 @@ void meteogram(const double stime[], const double tmpc[], const double relh[],
                const double precip[], const double srad[],
                const int firewx_cat[], const double dfm_1h[],
                const double dfm_10h[], const double dfm_100h[],
-               const double dfm_1000h[], std::ptrdiff_t N) {
+               const double dfm_1000h[], const double dft_1h[],
+               const double dft_10h[], const double dft_100h[],
+               const double dft_1000h[], std::ptrdiff_t N) {
     const auto window_size = ImGui::GetWindowSize();
     const int rows = 3;
     const int cols = 2;
@@ -317,9 +339,12 @@ void meteogram(const double stime[], const double tmpc[], const double relh[],
         surface_winds(stime, wspd, wdir, gust, firewx_cat, N);
         solar_radiation_and_precip(stime, srad, precip, firewx_cat, N);
 
-        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, N);
-        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, N);
-        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, N);
+        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, dft_1h, dft_10h,
+                  dft_100h, dft_1000h, N);
+        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, dft_1h, dft_10h,
+                  dft_100h, dft_1000h, N);
+        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, dft_1h, dft_10h,
+                  dft_100h, dft_1000h, N);
 
         ImPlot::EndSubplots();
     }

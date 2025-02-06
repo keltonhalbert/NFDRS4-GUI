@@ -26,11 +26,9 @@ void meteogram(const double timestamp[], const double tmpc[],
                const double gust[], const double precip[], const double srad[],
                const int firewx_cat[], const double dfm_1h[],
                const double dfm_10h[], const double dfm_100h[],
-               const double dfm_1000h[], std::ptrdiff_t N);
-
-void fuel_moisture_timeseries(const double stime[], const double dfm_1h[],
-                              const double dfm_10h[], const double dfm_100h[],
-                              const double dfm_1000h[], std::ptrdiff_t N);
+               const double dfm_1000h[], const double dft_1h[],
+               const double dft_10h[], const double dft_100h[],
+               const double dft_1000h[], std::ptrdiff_t N);
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);

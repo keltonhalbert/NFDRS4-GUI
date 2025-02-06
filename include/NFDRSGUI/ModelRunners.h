@@ -75,6 +75,7 @@ struct DeadFuelModelRunner {
                 time_data.tm_mday, time_data.tm_hour, time_data.tm_min,
                 time_data.tm_sec, at, rh, sW, rain, 0.0218, true);
             radial_moisture[i] = model->medianRadialMoisture() * 100.0;
+            fuel_temperature[i] = model->meanWtdTemperature();
             progress.store(100 * i / data.N);
         }
     }
