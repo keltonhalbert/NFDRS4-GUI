@@ -17,6 +17,7 @@
 #include "implot_internal.h"
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>  // Will drag system OpenGL headers
+#include <NFDRSGUI/ModelRunners.h>
 
 namespace nfdrs {
 

@@ -118,40 +118,22 @@ void MainApp::RenderLoop() {
 
     static Meteogram met_data(timestamp, relh, tmpc, wspd, wdir, gust, rain,
                               pres, srad, NSTATIC);
-    static double mean_radial_moisture_1h[NSTATIC];
-    static double mean_radial_moisture_10h[NSTATIC];
-    static double mean_radial_moisture_100h[NSTATIC];
-    static double mean_radial_moisture_1000h[NSTATIC];
     firewx_category(met_data);
 
-    std::atomic<int> progress = 0;
-
     // Dead Fuel Moisture models
-    std::unique_ptr<DeadFuelMoisture> dfm_1hour =
-        std::make_unique<DeadFuelMoisture>(0.20, "1-hour");
-    std::unique_ptr<DeadFuelMoisture> dfm_10hour =
-        std::make_unique<DeadFuelMoisture>(0.64, "10-hour");
-    std::unique_ptr<DeadFuelMoisture> dfm_100hour =
-        std::make_unique<DeadFuelMoisture>(2.0, "100-hour");
-    std::unique_ptr<DeadFuelMoisture> dfm_1000hour =
-        std::make_unique<DeadFuelMoisture>(6.40, "1000-hour");
+    DeadFuelModelRunner dfm_1hour =
+        DeadFuelModelRunner(0.20, "1-hour", met_data);
+    DeadFuelModelRunner dfm_10hour =
+        DeadFuelModelRunner(0.64, "10-hour", met_data);
+    DeadFuelModelRunner dfm_100hour =
+        DeadFuelModelRunner(2.0, "100-hour", met_data);
+    DeadFuelModelRunner dfm_1000hour =
+        DeadFuelModelRunner(6.40, "1000-hour", met_data);
 
-    printf("Calculating...\n");
-    std::thread th_dfm1(calc_dfm, std::ref(met_data), dfm_1hour.get(),
-                        mean_radial_moisture_1h, std::ref(progress));
-    std::thread th_dfm10(calc_dfm, std::ref(met_data), dfm_10hour.get(),
-                         mean_radial_moisture_10h, std::ref(progress));
-    std::thread th_dfm100(calc_dfm, std::ref(met_data), dfm_100hour.get(),
-                          mean_radial_moisture_100h, std::ref(progress));
-    std::thread th_dfm1000(calc_dfm, std::ref(met_data), dfm_1000hour.get(),
-                           mean_radial_moisture_1000h, std::ref(progress));
-    th_dfm1.join();
-    th_dfm10.join();
-    th_dfm100.join();
-    th_dfm1000.join();
-    printf("Done!\n");
-
-    /*auto runner = DeadFuelModelRunner(dfm_1hour);*/
+    dfm_1hour.run(met_data);
+    dfm_10hour.run(met_data);
+    dfm_100hour.run(met_data);
+    dfm_1000hour.run(met_data);
 
     ImGuiID dockspace_id, dock_main_id;
 
@@ -247,9 +229,11 @@ void MainApp::RenderLoop() {
                       met_data.m_relh.get(), met_data.m_wspd.get(),
                       met_data.m_wdir.get(), met_data.m_gust.get(),
                       met_data.m_rain.get(), met_data.m_srad.get(),
-                      met_data.m_firewx_cat.get(), mean_radial_moisture_1h,
-                      mean_radial_moisture_10h, mean_radial_moisture_100h,
-                      mean_radial_moisture_1000h, met_data.N);
+                      met_data.m_firewx_cat.get(),
+                      dfm_1hour.radial_moisture.get(),
+                      dfm_10hour.radial_moisture.get(),
+                      dfm_100hour.radial_moisture.get(),
+                      dfm_1000hour.radial_moisture.get(), met_data.N);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/
