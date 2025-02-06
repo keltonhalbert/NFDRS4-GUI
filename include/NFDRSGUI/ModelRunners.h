@@ -79,6 +79,8 @@ struct DeadFuelModelRunner {
 
     void run(const Meteogram& data) {
         model->setMaximumLocalMoisture(settings.max_local_moisture);
+        model->setRandomSeed(settings.random_seed);
+        model->setStickLength(settings.stick_length);
         model->initializeStick();
         process_thread =
             std::thread(&DeadFuelModelRunner::calc_dfm, this, std::ref(data));

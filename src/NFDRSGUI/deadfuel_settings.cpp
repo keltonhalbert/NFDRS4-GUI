@@ -7,6 +7,7 @@ static void individual_settings(const char* title, DeadFuelModelRunner& dfm,
                                 Meteogram& data) {
     if (ImGui::BeginTabItem(title)) {
         ImGui::InputInt("Random Seed", &dfm.settings.random_seed);
+        ImGui::InputDouble("stick_length", &dfm.settings.stick_length);
         ImGui::SliderFloat("Maximum Local Moisture",
                            &dfm.settings.max_local_moisture, 0.0f, 1.0f,
                            "%.3f");
