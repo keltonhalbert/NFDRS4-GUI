@@ -19,7 +19,7 @@ struct DeadFuelSettings {
     double desorption_rate = 0.06;
     double planar_heat_transfer_rate;
     float max_local_moisture = 0.6;
-    double stick_density = 0.4;
+    float stick_density = 0.4;
     double stick_length = 41.0;
     int diffusivity_steps;
     int moisture_steps;
@@ -51,6 +51,13 @@ struct DeadFuelModelRunner {
         model = std::make_unique<DeadFuelMoisture>(radius, name);
         radial_moisture = std::make_unique<double[]>(size);
         fuel_temperature = std::make_unique<double[]>(size);
+
+        // get derived settings
+        settings.adsorption_rate = model->adsorptionRate();
+        settings.desorption_rate = model->desorptionRate();
+        settings.planar_heat_transfer_rate = model->planarHeatTransferRate();
+        settings.diffusivity_steps = model->diffusivitySteps();
+        settings.moisture_steps = model->moistureSteps();
     }
 
     ~DeadFuelModelRunner() {
@@ -78,12 +85,29 @@ struct DeadFuelModelRunner {
     }
 
     void run(const Meteogram& data) {
-        model->setMaximumLocalMoisture(settings.max_local_moisture);
         model->setRandomSeed(settings.random_seed);
+        model->setDiffusivitySteps(settings.diffusivity_steps);
+        model->setMoistureSteps(settings.moisture_steps);
+        model->setStickNodes(settings.stick_nodes);
+        model->setAdsorptionRate(settings.adsorption_rate);
+        model->setDesorptionRate(settings.desorption_rate);
+        model->setPlanarHeatTransferRate(settings.planar_heat_transfer_rate);
         model->setStickLength(settings.stick_length);
+        model->setStickDensity(settings.stick_density);
+        model->setMaximumLocalMoisture(settings.max_local_moisture);
         model->initializeStick();
         process_thread =
             std::thread(&DeadFuelModelRunner::calc_dfm, this, std::ref(data));
+    }
+
+    void default_settings() {
+        settings = DeadFuelSettings();
+        settings.adsorption_rate = model->deriveAdsorptionRate(radius);
+        settings.diffusivity_steps = model->deriveDiffusivitySteps(radius);
+        settings.moisture_steps = model->deriveMoistureSteps(radius);
+        settings.stick_nodes = model->deriveStickNodes(radius);
+        settings.planar_heat_transfer_rate =
+            model->derivePlanarHeatTransferRate(radius);
     }
 
     void reset() {
