@@ -21,6 +21,11 @@
 
 namespace nfdrs {
 
+void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
+                        DeadFuelModelRunner& dfm_10h,
+                        DeadFuelModelRunner& dfm_100h,
+                        DeadFuelModelRunner& dfm_1000h, Meteogram& data);
+
 void meteogram(const double timestamp[], const double tmpc[],
                const double relh[], const double wspd[], const double wdir[],
                const double gust[], const double precip[], const double srad[],
