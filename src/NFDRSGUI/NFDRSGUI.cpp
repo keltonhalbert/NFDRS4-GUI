@@ -118,19 +118,39 @@ static void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("1h Fuels")) {
-                ImGui::Button("Run");
+                if (ImGui::Button("Run")) {
+                    if (dfm_1h.model->updates() > 0) {
+                        dfm_1h.reset();
+                    }
+                    dfm_1h.run(data);
+                }
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("10h Fuels")) {
-                ImGui::Button("Run");
+                if (ImGui::Button("Run")) {
+                    if (dfm_10h.model->updates() > 0) {
+                        dfm_10h.reset();
+                    }
+                    dfm_10h.run(data);
+                }
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("100h Fuels")) {
-                ImGui::Button("Run");
+                if (ImGui::Button("Run")) {
+                    if (dfm_100h.model->updates() > 0) {
+                        dfm_100h.reset();
+                    }
+                    dfm_100h.run(data);
+                }
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("1000h Fuels")) {
-                ImGui::Button("Run");
+                if (ImGui::Button("Run")) {
+                    if (dfm_1000h.model->updates() > 0) {
+                        dfm_1000h.reset();
+                    }
+                    dfm_1000h.run(data);
+                }
                 ImGui::EndTabItem();
             }
         }

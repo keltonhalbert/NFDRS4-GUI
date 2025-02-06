@@ -83,17 +83,10 @@ struct DeadFuelModelRunner {
     }
 
     void reset() {
-        printf("0\n");
         if (process_thread.joinable()) process_thread.join();
-        printf("1\n");
         process_thread = std::thread();
-        printf("2\n");
         progress = 0;
-        printf("3\n");
-        model->zero();
-        printf("4\n");
         model->initializeParameters(radius, name);
-        printf("Reset 2!\n");
     }
 };
 
