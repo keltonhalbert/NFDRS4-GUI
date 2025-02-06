@@ -166,8 +166,10 @@ void MainApp::RenderLoop() {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("Menu")) {
                 ImGui::MenuItem("DemoWindow", nullptr, &show_imgui_demo);
-                ImGui::MenuItem("Show Help Markers", nullptr,
-                                &show_helpmarkers);
+                /*ImGui::MenuItem("Show Help Markers", nullptr,*/
+                /*                &show_helpmarkers);*/
+                ImGui::MenuItem("Idle FPS", nullptr,
+                                &m_fps_idling.idling_enabled);
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Configure & Run")) {

@@ -42,6 +42,7 @@ struct DeadFuelModelRunner {
     std::unique_ptr<double[]> fuel_temperature;
     std::atomic<int> progress = 0;
     const std::ptrdiff_t size;
+    bool finished = false;
 
     DeadFuelModelRunner(double in_radius, const char* in_name,
                         const Meteogram& data)
@@ -82,6 +83,7 @@ struct DeadFuelModelRunner {
             fuel_temperature[i] = model->meanWtdTemperature();
             progress.store(100 * i / data.N);
         }
+        finished = true;
     }
 
     void run(const Meteogram& data) {
@@ -114,6 +116,7 @@ struct DeadFuelModelRunner {
         if (process_thread.joinable()) process_thread.join();
         process_thread = std::thread();
         progress = 0;
+        finished = false;
         model->initializeParameters(radius, name);
     }
 };
