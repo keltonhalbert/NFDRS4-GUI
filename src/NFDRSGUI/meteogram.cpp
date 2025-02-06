@@ -1,9 +1,9 @@
-#include <imgui.h>
-#include <implot.h>
-#include <implot_internal.h>
+#include <NFDRSGUI/NFDRSGUI.h>
 
 #include <cmath>
 #include <cstddef>
+
+#include "NFDRSGUI/ModelRunners.h"
 
 namespace nfdrs {
 
@@ -264,11 +264,10 @@ static void solar_radiation_and_precip(const double stime[],
     }
 }
 
-static void dead_fuel(const double stime[], const double dfm_1h[],
-                      const double dfm_10h[], const double dfm_100h[],
-                      const double dfm_1000h[], const double dft_1h[],
-                      const double dft_10h[], const double dft_100h[],
-                      const double dft_1000h[], std::ptrdiff_t N) {
+static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
+                      const DeadFuelModelRunner& dfm_10h,
+                      const DeadFuelModelRunner& dfm_100h,
+                      const DeadFuelModelRunner& dfm_1000h, std::ptrdiff_t N) {
     if (ImPlot::BeginPlot("Fuel Moisture")) {
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
@@ -299,10 +298,16 @@ static void dead_fuel(const double stime[], const double dfm_1h[],
         ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
         /*ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));*/
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
-        ImPlot::PlotLine("1h fm", stime, dfm_1h, N);
-        ImPlot::PlotLine("10h fm", stime, dfm_10h, N);
-        ImPlot::PlotLine("100h fm", stime, dfm_100h, N);
-        ImPlot::PlotLine("1000h fm", stime, dfm_1000h, N);
+        if (dfm_1h.finished)
+            ImPlot::PlotLine("1h fm", stime, dfm_1h.radial_moisture.get(), N);
+        if (dfm_10h.finished)
+            ImPlot::PlotLine("10h fm", stime, dfm_10h.radial_moisture.get(), N);
+        if (dfm_100h.finished)
+            ImPlot::PlotLine("100h fm", stime, dfm_100h.radial_moisture.get(),
+                             N);
+        if (dfm_1000h.finished)
+            ImPlot::PlotLine("1000h fm", stime, dfm_1000h.radial_moisture.get(),
+                             N);
         /*ImPlot::PopStyleColor();*/
         ImPlot::PopStyleVar();
 
@@ -310,10 +315,17 @@ static void dead_fuel(const double stime[], const double dfm_1h[],
         ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
         /*ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));*/
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
-        ImPlot::PlotLine("1h ft", stime, dft_1h, N);
-        ImPlot::PlotLine("10h ft", stime, dft_10h, N);
-        ImPlot::PlotLine("100h ft", stime, dft_100h, N);
-        ImPlot::PlotLine("1000h ft", stime, dft_1000h, N);
+        if (dfm_1h.finished)
+            ImPlot::PlotLine("1h ft", stime, dfm_1h.fuel_temperature.get(), N);
+        if (dfm_10h.finished)
+            ImPlot::PlotLine("10h ft", stime, dfm_10h.fuel_temperature.get(),
+                             N);
+        if (dfm_100h.finished)
+            ImPlot::PlotLine("100h ft", stime, dfm_100h.fuel_temperature.get(),
+                             N);
+        if (dfm_1000h.finished)
+            ImPlot::PlotLine("1000h ft", stime,
+                             dfm_1000h.fuel_temperature.get(), N);
         /*ImPlot::PopStyleColor();*/
         ImPlot::PopStyleVar();
 
@@ -321,30 +333,32 @@ static void dead_fuel(const double stime[], const double dfm_1h[],
     }
 }
 
-void meteogram(const double stime[], const double tmpc[], const double relh[],
-               const double wspd[], const double wdir[], const double gust[],
-               const double precip[], const double srad[],
-               const int firewx_cat[], const double dfm_1h[],
-               const double dfm_10h[], const double dfm_100h[],
-               const double dfm_1000h[], const double dft_1h[],
-               const double dft_10h[], const double dft_100h[],
-               const double dft_1000h[], std::ptrdiff_t N) {
+void meteogram(const Meteogram& data, const DeadFuelModelRunner& dfm_1h,
+               const DeadFuelModelRunner& dfm_10h,
+               const DeadFuelModelRunner& dfm_100h,
+               const DeadFuelModelRunner& dfm_1000h) {
     const auto window_size = ImGui::GetWindowSize();
     const int rows = 3;
     const int cols = 2;
     if (ImPlot::BeginSubplots(
             "Station Meteogram", rows, cols, {-1, -1},
             ImPlotSubplotFlags_LinkAllX | ImPlotSubplotFlags_ColMajor)) {
-        temperature_and_humidity(stime, tmpc, relh, firewx_cat, N);
-        surface_winds(stime, wspd, wdir, gust, firewx_cat, N);
-        solar_radiation_and_precip(stime, srad, precip, firewx_cat, N);
+        temperature_and_humidity(data.m_timestamp.get(), data.m_tair.get(),
+                                 data.m_relh.get(), data.m_firewx_cat.get(),
+                                 data.N);
+        surface_winds(data.m_timestamp.get(), data.m_wspd.get(),
+                      data.m_wdir.get(), data.m_gust.get(),
+                      data.m_firewx_cat.get(), data.N);
+        solar_radiation_and_precip(data.m_timestamp.get(), data.m_srad.get(),
+                                   data.m_rain.get(), data.m_firewx_cat.get(),
+                                   data.N);
 
-        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, dft_1h, dft_10h,
-                  dft_100h, dft_1000h, N);
-        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, dft_1h, dft_10h,
-                  dft_100h, dft_1000h, N);
-        dead_fuel(stime, dfm_1h, dfm_10h, dfm_100h, dfm_1000h, dft_1h, dft_10h,
-                  dft_100h, dft_1000h, N);
+        dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h, dfm_1000h,
+                  data.N);
+        dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h, dfm_1000h,
+                  data.N);
+        dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h, dfm_1000h,
+                  data.N);
 
         ImPlot::EndSubplots();
     }

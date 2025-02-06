@@ -26,14 +26,10 @@ void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
                         DeadFuelModelRunner& dfm_100h,
                         DeadFuelModelRunner& dfm_1000h, Meteogram& data);
 
-void meteogram(const double timestamp[], const double tmpc[],
-               const double relh[], const double wspd[], const double wdir[],
-               const double gust[], const double precip[], const double srad[],
-               const int firewx_cat[], const double dfm_1h[],
-               const double dfm_10h[], const double dfm_100h[],
-               const double dfm_1000h[], const double dft_1h[],
-               const double dft_10h[], const double dft_100h[],
-               const double dft_1000h[], std::ptrdiff_t N);
+void meteogram(const Meteogram& met_data, const DeadFuelModelRunner& dfm_1h,
+               const DeadFuelModelRunner& dfm_10h,
+               const DeadFuelModelRunner& dfm_100h,
+               const DeadFuelModelRunner& dfm_1000h);
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -57,7 +53,7 @@ class ClockSeconds_ {
 
 struct FPSIdling {
     float fps_idle = 1.f;
-    bool idling_enabled = true;
+    bool idling_enabled = false;
     bool is_idling = false;
 };
 

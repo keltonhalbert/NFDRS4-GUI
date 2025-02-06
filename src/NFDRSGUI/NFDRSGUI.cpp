@@ -208,19 +208,8 @@ void MainApp::RenderLoop() {
          * 0.0f));*/
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, m_window_flags)) {
-            meteogram(met_data.m_timestamp.get(), met_data.m_tair.get(),
-                      met_data.m_relh.get(), met_data.m_wspd.get(),
-                      met_data.m_wdir.get(), met_data.m_gust.get(),
-                      met_data.m_rain.get(), met_data.m_srad.get(),
-                      met_data.m_firewx_cat.get(),
-                      dfm_1hour.radial_moisture.get(),
-                      dfm_10hour.radial_moisture.get(),
-                      dfm_100hour.radial_moisture.get(),
-                      dfm_1000hour.radial_moisture.get(),
-                      dfm_1hour.fuel_temperature.get(),
-                      dfm_10hour.fuel_temperature.get(),
-                      dfm_100hour.fuel_temperature.get(),
-                      dfm_1000hour.fuel_temperature.get(), met_data.N);
+            meteogram(met_data, dfm_1hour, dfm_10hour, dfm_100hour,
+                      dfm_1000hour);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/
