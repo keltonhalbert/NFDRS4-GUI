@@ -6,6 +6,10 @@ namespace nfdrs {
 static void individual_settings(const char* title, DeadFuelModelRunner& dfm,
                                 Meteogram& data) {
     if (ImGui::BeginTabItem(title)) {
+        ImGui::InputInt("Random Seed", &dfm.settings.random_seed);
+        ImGui::SliderFloat("Maximum Local Moisture",
+                           &dfm.settings.max_local_moisture, 0.0f, 1.0f,
+                           "%.3f");
         if (ImGui::Button("Run")) {
             if (dfm.model->updates() > 0) {
                 dfm.reset();

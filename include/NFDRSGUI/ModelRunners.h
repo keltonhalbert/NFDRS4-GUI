@@ -18,7 +18,7 @@ struct DeadFuelSettings {
     double adsorption_rate;
     double desorption_rate = 0.06;
     double planar_heat_transfer_rate;
-    double max_local_moisture = 0.6;
+    float max_local_moisture = 0.6;
     double stick_density = 0.4;
     double stick_length = 41.0;
     int diffusivity_steps;
@@ -78,6 +78,8 @@ struct DeadFuelModelRunner {
     }
 
     void run(const Meteogram& data) {
+        model->setMaximumLocalMoisture(settings.max_local_moisture);
+        model->initializeStick();
         process_thread =
             std::thread(&DeadFuelModelRunner::calc_dfm, this, std::ref(data));
     }
