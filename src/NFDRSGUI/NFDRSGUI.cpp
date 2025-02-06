@@ -89,24 +89,54 @@ void firewx_category(Meteogram& met_data) {
     }
 }
 
-void calc_dfm(const Meteogram& met_data, DeadFuelMoisture* dfm,
-              double radial_moisture[], std::atomic<int>& progress) {
-    for (int i = 0; i < met_data.N; ++i) {
-        double at = met_data.m_tair[i];
-        double rh = met_data.m_relh[i] / 100.0;
-        double sW = met_data.m_srad[i];
-        double rain = met_data.m_rain[i] * 10.0;
-        tm time_data;
-        ImPlotTime curtime = ImPlotTime::FromDouble(met_data.m_timestamp[i]);
-        ImPlot::GetGmtTime(curtime, &time_data);
-
-        bool ret =
-            dfm->update(time_data.tm_year + 1900, time_data.tm_mon + 1,
-                        time_data.tm_mday, time_data.tm_hour, time_data.tm_min,
-                        time_data.tm_sec, at, rh, sW, rain, 0.0218, true);
-        radial_moisture[i] = dfm->medianRadialMoisture() * 100.0;
-        progress.store(100 * i / met_data.N);
+static void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
+                               DeadFuelModelRunner& dfm_10h,
+                               DeadFuelModelRunner& dfm_100h,
+                               DeadFuelModelRunner& dfm_1000h,
+                               Meteogram& data) {
+    if (ImGui::Begin("Dead Fuel Model Settings", &enabled)) {
+        if (ImGui::BeginTabBar("Dead Fuel Models")) {
+            if (ImGui::BeginTabItem("All Fuels")) {
+                if (ImGui::Button("Run")) {
+                    if (dfm_1h.model->updates() > 0) {
+                        dfm_1h.reset();
+                    }
+                    if (dfm_10h.model->updates() > 0) {
+                        dfm_10h.reset();
+                    }
+                    if (dfm_100h.model->updates() > 0) {
+                        dfm_100h.reset();
+                    }
+                    if (dfm_1000h.model->updates() > 0) {
+                        dfm_1000h.reset();
+                    }
+                    dfm_1h.run(data);
+                    dfm_10h.run(data);
+                    dfm_100h.run(data);
+                    dfm_1000h.run(data);
+                }
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("1h Fuels")) {
+                ImGui::Button("Run");
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("10h Fuels")) {
+                ImGui::Button("Run");
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("100h Fuels")) {
+                ImGui::Button("Run");
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("1000h Fuels")) {
+                ImGui::Button("Run");
+                ImGui::EndTabItem();
+            }
+        }
+        ImGui::EndTabBar();
     }
+    ImGui::End();
 }
 
 void MainApp::RenderLoop() {
@@ -130,10 +160,10 @@ void MainApp::RenderLoop() {
     DeadFuelModelRunner dfm_1000hour =
         DeadFuelModelRunner(6.40, "1000-hour", met_data);
 
-    dfm_1hour.run(met_data);
-    dfm_10hour.run(met_data);
-    dfm_100hour.run(met_data);
-    dfm_1000hour.run(met_data);
+    /*dfm_1hour.run(met_data);*/
+    /*dfm_10hour.run(met_data);*/
+    /*dfm_100hour.run(met_data);*/
+    /*dfm_1000hour.run(met_data);*/
 
     ImGuiID dockspace_id, dock_main_id;
 
@@ -191,7 +221,8 @@ void MainApp::RenderLoop() {
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Configure & Run")) {
-                ImGui::MenuItem("Dead Fuel Moisture Model", nullptr);
+                ImGui::MenuItem("Dead Fuel Moisture Model", nullptr,
+                                &show_dead_fuel_settings);
                 ImGui::MenuItem("Live Fuel Moisture Model", nullptr);
                 ImGui::MenuItem("NFDRS4 Model", nullptr);
                 ImGui::EndMenu();
@@ -241,6 +272,10 @@ void MainApp::RenderLoop() {
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/
+
+        if (show_dead_fuel_settings)
+            dead_fuel_settings(show_dead_fuel_settings, dfm_1hour, dfm_10hour,
+                               dfm_100hour, dfm_1000hour, met_data);
 
         /*ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);*/
         /*if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {*/

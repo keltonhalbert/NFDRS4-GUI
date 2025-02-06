@@ -33,6 +33,8 @@ struct DeadFuelSettings {
 };
 
 struct DeadFuelModelRunner {
+    double radius;
+    std::string name;
     std::thread process_thread;
     DeadFuelSettings settings;
     std::unique_ptr<DeadFuelMoisture> model;
@@ -41,8 +43,11 @@ struct DeadFuelModelRunner {
     std::atomic<int> progress = 0;
     const std::ptrdiff_t size;
 
-    DeadFuelModelRunner(double radius, const char* name, const Meteogram& data)
+    DeadFuelModelRunner(double in_radius, const char* in_name,
+                        const Meteogram& data)
         : size(data.N), process_thread() {
+        radius = in_radius;
+        name = in_name;
         model = std::make_unique<DeadFuelMoisture>(radius, name);
         radial_moisture = std::make_unique<double[]>(size);
         fuel_temperature = std::make_unique<double[]>(size);
@@ -75,6 +80,20 @@ struct DeadFuelModelRunner {
     void run(const Meteogram& data) {
         process_thread =
             std::thread(&DeadFuelModelRunner::calc_dfm, this, std::ref(data));
+    }
+
+    void reset() {
+        printf("0\n");
+        if (process_thread.joinable()) process_thread.join();
+        printf("1\n");
+        process_thread = std::thread();
+        printf("2\n");
+        progress = 0;
+        printf("3\n");
+        model->zero();
+        printf("4\n");
+        model->initializeParameters(radius, name);
+        printf("Reset 2!\n");
     }
 };
 

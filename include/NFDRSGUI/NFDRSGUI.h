@@ -66,6 +66,8 @@ class MainApp {
     ImVec4 m_clear_color;
     bool m_dock_init = true;
 
+    bool show_dead_fuel_settings = false;
+
    public:
     MainApp() {
         glfwSetErrorCallback(glfw_error_callback);
