@@ -26,6 +26,9 @@ void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
                         DeadFuelModelRunner& dfm_100h,
                         DeadFuelModelRunner& dfm_1000h, Meteogram& data);
 
+void live_fuel_settings(bool& enabled);
+void nfdrs_settings(bool& enabled);
+
 void meteogram(const Meteogram& met_data, const DeadFuelModelRunner& dfm_1h,
                const DeadFuelModelRunner& dfm_10h,
                const DeadFuelModelRunner& dfm_100h,
@@ -68,6 +71,8 @@ class MainApp {
     bool m_dock_init = true;
 
     bool show_dead_fuel_settings = false;
+    bool show_live_fuel_settings = false;
+    bool show_nfdrs_settings = false;
 
    public:
     MainApp() {
@@ -132,8 +137,8 @@ class MainApp {
         m_window_flags = ImGuiWindowFlags_NoDecoration |
                          // ImGuiWindowFlags_NoMove |
                          ImGuiWindowFlags_NoSavedSettings;
-        m_dockspace_flags =
-            ImGuiDockNodeFlags_HiddenTabBar | ImGuiDockNodeFlags_NoTabBar;
+        /*m_dockspace_flags =*/
+        /*    ImGuiDockNodeFlags_HiddenTabBar | ImGuiDockNodeFlags_NoTabBar;*/
 
         // get the viewport so we can fill it with our window
         m_main_viewport = ImGui::GetMainViewport();

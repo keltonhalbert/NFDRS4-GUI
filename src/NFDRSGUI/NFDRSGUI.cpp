@@ -175,8 +175,9 @@ void MainApp::RenderLoop() {
             if (ImGui::BeginMenu("Configure & Run")) {
                 ImGui::MenuItem("Dead Fuel Moisture Model", nullptr,
                                 &show_dead_fuel_settings);
-                ImGui::MenuItem("Live Fuel Moisture Model", nullptr);
-                ImGui::MenuItem("NFDRS4 Model", nullptr);
+                ImGui::MenuItem("Live Fuel Moisture Model", nullptr,
+                                &show_live_fuel_settings);
+                ImGui::MenuItem("NFDRS4 Model", nullptr, &show_nfdrs_settings);
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();
@@ -218,6 +219,11 @@ void MainApp::RenderLoop() {
             dead_fuel_settings(show_dead_fuel_settings, dfm_1hour, dfm_10hour,
                                dfm_100hour, dfm_1000hour, met_data);
 
+        if (show_live_fuel_settings)
+            live_fuel_settings(show_live_fuel_settings);
+
+        if (show_nfdrs_settings) nfdrs_settings(show_nfdrs_settings);
+
         /*ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);*/
         /*if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {*/
         /*    // pass*/
@@ -225,10 +231,9 @@ void MainApp::RenderLoop() {
         /*ImGui::End();*/
 
         // 1. Show the big demo window (Most of the sample code is in
-        // ImGui::ShowDemoWindow()! You can browse its code to learn more about
-        // Dear ImGui!).
-        // bool show_demo_window = true;
-        // if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
+        // ImGui::ShowDemoWindow()! You can browse its code to learn more
+        // about Dear ImGui!). bool show_demo_window = true; if
+        // (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
         //
         // Rendering
         ImGui::Render();
