@@ -4,6 +4,7 @@
 #include <cstddef>
 
 #include "NFDRSGUI/ModelRunners.h"
+#include "implot.h"
 
 namespace nfdrs {
 
@@ -114,16 +115,18 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
                       crit_col, extr_col);
 
         // Plot the Relative Humidity
+        ImVec4 color = ImPlot::GetColormapColor(8, ImPlotColormap_BrBG);
         ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
-        ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));
+        ImPlot::PushStyleColor(ImPlotCol_Line, color);
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
         ImPlot::PlotLine("RELH", stime, relh, N);
         ImPlot::PopStyleColor();
         ImPlot::PopStyleVar();
 
         // Plot the Air Temperature
+        color = ImPlot::GetColormapColor(1, ImPlotColormap_RdBu);
         ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 2);
-        ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(1.0, 0.0, 0.0, 1.0));
+        ImPlot::PushStyleColor(ImPlotCol_Line, color);
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
         // plot the line data
         ImPlot::PlotLine("TAIR", stime, tmpc, N);
@@ -294,40 +297,71 @@ static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
         ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 100);
         ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 100);
 
+        ImPlotColormap cmap = ImPlotColormap_BrBG;
+        ImPlot::PushColormap(cmap);
         // Plot the Relative Humidity
         ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
         /*ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));*/
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
-        if (dfm_1h.finished)
+        if (dfm_1h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::GetColormapColor(10));
             ImPlot::PlotLine("1h fm", stime, dfm_1h.radial_moisture.get(), N);
-        if (dfm_10h.finished)
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_10h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(9));
             ImPlot::PlotLine("10h fm", stime, dfm_10h.radial_moisture.get(), N);
-        if (dfm_100h.finished)
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_100h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(8));
             ImPlot::PlotLine("100h fm", stime, dfm_100h.radial_moisture.get(),
                              N);
-        if (dfm_1000h.finished)
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_1000h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(7));
             ImPlot::PlotLine("1000h fm", stime, dfm_1000h.radial_moisture.get(),
                              N);
+            ImPlot::PopStyleColor();
+        }
         /*ImPlot::PopStyleColor();*/
         ImPlot::PopStyleVar();
+        ImPlot::PopColormap();
 
-        // Plot the Relative Humidity
+        // Plot the fuel temperature
+        cmap = ImPlotColormap_RdBu;
+        ImPlot::PushColormap(cmap);
         ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
         /*ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));*/
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
-        if (dfm_1h.finished)
+        if (dfm_1h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(3));
             ImPlot::PlotLine("1h ft", stime, dfm_1h.fuel_temperature.get(), N);
-        if (dfm_10h.finished)
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_10h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(2));
             ImPlot::PlotLine("10h ft", stime, dfm_10h.fuel_temperature.get(),
                              N);
-        if (dfm_100h.finished)
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_100h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(1));
             ImPlot::PlotLine("100h ft", stime, dfm_100h.fuel_temperature.get(),
                              N);
-        if (dfm_1000h.finished)
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_1000h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(0));
             ImPlot::PlotLine("1000h ft", stime,
                              dfm_1000h.fuel_temperature.get(), N);
+            ImPlot::PopStyleColor();
+        }
         /*ImPlot::PopStyleColor();*/
         ImPlot::PopStyleVar();
+        ImPlot::PopColormap();
 
         ImPlot::EndPlot();
     }

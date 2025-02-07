@@ -18,6 +18,7 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>  // Will drag system OpenGL headers
 #include <NFDRSGUI/ModelRunners.h>
+#include <NFDRSGUI/Style.h>
 
 namespace nfdrs {
 
@@ -144,7 +145,8 @@ class MainApp {
         m_main_viewport = ImGui::GetMainViewport();
 
         // Setup Dear ImGui style
-        ImGui::StyleColorsDark();
+        /*ImGui::StyleColorsDark();*/
+        Style();
         // ImGui::StyleColorsLight();
 
         // When viewports are enabled we tweak WindowRounding/WindowBg so
