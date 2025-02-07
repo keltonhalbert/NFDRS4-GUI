@@ -9,6 +9,7 @@ namespace nfdrs {
 static void individual_settings(const char* title, DeadFuelModelRunner& dfm,
                                 Meteogram& data) {
     if (ImGui::BeginTabItem(title)) {
+        ImGui::PushItemWidth(ImGui::GetFontSize() * -15);
         ImGui::InputInt("Random Seed", &dfm.settings.random_seed);
         ImGui::InputInt("Diffusivity Steps", &dfm.settings.diffusivity_steps);
         ImGui::InputInt("Moisture Steps", &dfm.settings.moisture_steps);
@@ -35,6 +36,7 @@ static void individual_settings(const char* title, DeadFuelModelRunner& dfm,
         }
         ImGui::SameLine();
         ImGui::ProgressBar(dfm.progress);
+        ImGui::PopItemWidth();
         ImGui::EndTabItem();
     }
 }
@@ -43,6 +45,11 @@ void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
                         DeadFuelModelRunner& dfm_10h,
                         DeadFuelModelRunner& dfm_100h,
                         DeadFuelModelRunner& dfm_1000h, Meteogram& data) {
+    const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(
+        ImVec2(main_viewport->WorkPos.x + 100, main_viewport->WorkPos.y + 20),
+        ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(350, 400), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Dead Fuel Model Settings", &enabled)) {
         if (ImGui::BeginTabBar("Dead Fuel Models")) {
             individual_settings("1h Fuels", dfm_1h, data);
