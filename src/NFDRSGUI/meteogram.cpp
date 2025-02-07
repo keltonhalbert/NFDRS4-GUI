@@ -247,7 +247,7 @@ static void solar_radiation_and_precip(const double stime[],
 
         // Plot the solar radiation
         ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.5f);
-        ImPlot::PushStyleColor(ImPlotCol_Fill, ImVec4(0.941, 0.82, 0.282, 1.0));
+        ImPlot::PushStyleColor(ImPlotCol_Fill, ImVec4(1, 0.867, 0.325, 1.0));
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
         // plot the line data
         ImPlot::PlotShaded("SRAD", stime, srad, N, -INFINITY);
@@ -255,7 +255,7 @@ static void solar_radiation_and_precip(const double stime[],
         ImPlot::PopStyleVar();
 
         // Plot the rainfall sinze 00Z
-        const ImVec4 rain_color = {0.243, 0.722, 0.322, 1.0};
+        const ImVec4 rain_color = {0.043, 0.522, 0.49, 1.0};
         ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.5f);
         ImPlot::PushStyleColor(ImPlotCol_Fill, rain_color);
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
@@ -305,23 +305,24 @@ static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
         if (dfm_1h.finished) {
             ImPlot::PushStyleColor(ImPlotCol_Line,
-                                   ImPlot::GetColormapColor(10));
+                                   ImPlot::SampleColormap(0.95));
             ImPlot::PlotLine("1h fm", stime, dfm_1h.radial_moisture.get(), N);
             ImPlot::PopStyleColor();
         }
         if (dfm_10h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(9));
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(0.9));
             ImPlot::PlotLine("10h fm", stime, dfm_10h.radial_moisture.get(), N);
             ImPlot::PopStyleColor();
         }
         if (dfm_100h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(8));
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.85));
             ImPlot::PlotLine("100h fm", stime, dfm_100h.radial_moisture.get(),
                              N);
             ImPlot::PopStyleColor();
         }
         if (dfm_1000h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(7));
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(0.8));
             ImPlot::PlotLine("1000h fm", stime, dfm_1000h.radial_moisture.get(),
                              N);
             ImPlot::PopStyleColor();
@@ -337,24 +338,25 @@ static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
         /*ImPlot::PushStyleColor(ImPlotCol_Line, ImVec4(0.0, 0.70, 0.0, 1.0));*/
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
         if (dfm_1h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(3));
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(.2));
             ImPlot::PlotLine("1h ft", stime, dfm_1h.fuel_temperature.get(), N);
             ImPlot::PopStyleColor();
         }
         if (dfm_10h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(2));
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(.15));
             ImPlot::PlotLine("10h ft", stime, dfm_10h.fuel_temperature.get(),
                              N);
             ImPlot::PopStyleColor();
         }
         if (dfm_100h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(1));
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(.1));
             ImPlot::PlotLine("100h ft", stime, dfm_100h.fuel_temperature.get(),
                              N);
             ImPlot::PopStyleColor();
         }
         if (dfm_1000h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(0));
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.05));
             ImPlot::PlotLine("1000h ft", stime,
                              dfm_1000h.fuel_temperature.get(), N);
             ImPlot::PopStyleColor();

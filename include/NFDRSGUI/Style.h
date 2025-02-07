@@ -44,7 +44,7 @@ inline void Style() {
     colors[ImGuiCol_TabSelected] = ImVec4(0.412, 0.188, 0.188, 1.0);
     colors[ImGuiCol_TabSelectedOverline] = ImVec4(0.412, 0.187, 0.188, 1.0);
     colors[ImGuiCol_TabHovered] = ImVec4(0.38, 0.38, 0.384, 1.00f);
-    colors[ImGuiCol_TabActive] = ImVec4(0.28f, 0.38f, 0.59f, 1.00f);
+    colors[ImGuiCol_TabActive] = ImVec4(0.412, 0.188, 0.188, 1.00f);
     colors[ImGuiCol_TabUnfocused] = ImVec4(0.15f, 0.18f, 0.22f, 1.00f);
     colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.15f, 0.18f, 0.22f, 1.00f);
     colors[ImGuiCol_DockingPreview] = ImVec4(0.557, 0.561, 0.561, 1.00f);
