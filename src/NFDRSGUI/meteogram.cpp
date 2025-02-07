@@ -271,7 +271,7 @@ static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
                       const DeadFuelModelRunner& dfm_10h,
                       const DeadFuelModelRunner& dfm_100h,
                       const DeadFuelModelRunner& dfm_1000h, std::ptrdiff_t N) {
-    if (ImPlot::BeginPlot("Fuel Moisture")) {
+    if (ImPlot::BeginPlot("Dead Fuels")) {
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
