@@ -108,9 +108,9 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
 
         // Plot the fire-wx categories
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
-        ImVec4 elev_col = {1, 0.616, 0, 0.5};
-        ImVec4 crit_col = {0.831, 0, 0, 0.5};
-        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.5};
+        ImVec4 elev_col = {1, 0.616, 0, 0.25};
+        ImVec4 crit_col = {0.831, 0, 0, 0.25};
+        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};
         PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 100}, elev_col,
                       crit_col, extr_col);
 
@@ -167,9 +167,9 @@ static void surface_winds(const double stime[], const double wspd[],
 
         // Plot the fire-wx categories
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
-        ImVec4 elev_col = {1, 0.616, 0, 0.5};
-        ImVec4 crit_col = {0.831, 0, 0, 0.5};
-        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.5};
+        ImVec4 elev_col = {1, 0.616, 0, 0.25};
+        ImVec4 crit_col = {0.831, 0, 0, 0.25};
+        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};
         PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 100}, elev_col,
                       crit_col, extr_col);
 
@@ -239,9 +239,9 @@ static void solar_radiation_and_precip(const double stime[],
 
         // Plot the fire-wx categories
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
-        ImVec4 elev_col = {1, 0.616, 0, 0.5};
-        ImVec4 crit_col = {0.831, 0, 0, 0.5};
-        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.5};
+        ImVec4 elev_col = {1, 0.616, 0, 0.25};
+        ImVec4 crit_col = {0.831, 0, 0, 0.25};
+        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};
         PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 1200}, elev_col,
                       crit_col, extr_col);
 
