@@ -159,6 +159,12 @@ void MainApp::RenderLoop() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         dockspace_id = ImGui::GetID("NFDRSGUI-Dockspace");
+        if ((m_main_viewport->Size.x < m_layout_threshold.x) ||
+            (m_main_viewport->Size.y < m_layout_threshold.y)) {
+            m_window_flags |= ImGuiWindowFlags_AlwaysVerticalScrollbar;
+        } else {
+            m_window_flags &= ~ImGuiWindowFlags_AlwaysVerticalScrollbar;
+        }
 
         ImGui::DockSpaceOverViewport(dockspace_id, m_main_viewport,
                                      m_dockspace_flags);
@@ -210,7 +216,7 @@ void MainApp::RenderLoop() {
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, m_window_flags)) {
             meteogram(met_data, dfm_1hour, dfm_10hour, dfm_100hour,
-                      dfm_1000hour);
+                      dfm_1000hour, m_layout_threshold);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/

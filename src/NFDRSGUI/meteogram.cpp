@@ -372,12 +372,20 @@ static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
 void meteogram(const Meteogram& data, const DeadFuelModelRunner& dfm_1h,
                const DeadFuelModelRunner& dfm_10h,
                const DeadFuelModelRunner& dfm_100h,
-               const DeadFuelModelRunner& dfm_1000h) {
-    const auto window_size = ImGui::GetWindowSize();
-    const int rows = 3;
-    const int cols = 2;
+               const DeadFuelModelRunner& dfm_1000h,
+               const ImVec2 resize_thresh) {
+    const ImVec2 window_size = ImGui::GetWindowSize();
+    ImVec2 plot_size = {-1, -1};
+    int rows = 3;
+    int cols = 2;
+    if ((window_size.x < resize_thresh.x) ||
+        (window_size.y < resize_thresh.y)) {
+        rows = 6;
+        cols = 1;
+        plot_size.y = 2048;
+    }
     if (ImPlot::BeginSubplots(
-            "Station Meteogram", rows, cols, {-1, -1},
+            "Station Meteogram", rows, cols, plot_size,
             ImPlotSubplotFlags_LinkAllX | ImPlotSubplotFlags_ColMajor)) {
         temperature_and_humidity(data.m_timestamp.get(), data.m_tair.get(),
                                  data.m_relh.get(), data.m_firewx_cat.get(),

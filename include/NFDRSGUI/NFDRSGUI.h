@@ -33,7 +33,8 @@ void nfdrs_settings(bool& enabled);
 void meteogram(const Meteogram& met_data, const DeadFuelModelRunner& dfm_1h,
                const DeadFuelModelRunner& dfm_10h,
                const DeadFuelModelRunner& dfm_100h,
-               const DeadFuelModelRunner& dfm_1000h);
+               const DeadFuelModelRunner& dfm_1000h,
+               const ImVec2 resize_thresh);
 
 static void glfw_error_callback(int error, const char* description) {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
@@ -67,6 +68,10 @@ class MainApp {
     ImGuiViewport* m_main_viewport;
     ImGuiWindowFlags m_window_flags;
     ImGuiDockNodeFlags m_dockspace_flags;
+    // The widths and height of the application before
+    // switching from two column to single column
+    // plot layouts.
+    static constexpr ImVec2 m_layout_threshold = {1200, 512};
     ImGuiStyle m_style;
     ImVec4 m_clear_color;
     bool m_dock_init = true;
