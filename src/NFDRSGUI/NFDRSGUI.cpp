@@ -159,12 +159,6 @@ void MainApp::RenderLoop() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         dockspace_id = ImGui::GetID("NFDRSGUI-Dockspace");
-        if ((m_main_viewport->Size.x < m_layout_threshold.x) ||
-            (m_main_viewport->Size.y < m_layout_threshold.y)) {
-            m_window_flags |= ImGuiWindowFlags_AlwaysVerticalScrollbar;
-        } else {
-            m_window_flags &= ~ImGuiWindowFlags_AlwaysVerticalScrollbar;
-        }
 
         ImGui::DockSpaceOverViewport(dockspace_id, m_main_viewport,
                                      m_dockspace_flags);

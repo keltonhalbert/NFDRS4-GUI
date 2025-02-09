@@ -378,12 +378,12 @@ void meteogram(const Meteogram& data, const DeadFuelModelRunner& dfm_1h,
     ImVec2 plot_size = {-1, -1};
     int rows = 3;
     int cols = 2;
-    if ((window_size.x < resize_thresh.x) ||
-        (window_size.y < resize_thresh.y)) {
-        rows = 6;
-        cols = 1;
-        plot_size.y = 2048;
-    }
+    /*if ((window_size.x < resize_thresh.x) ||*/
+    /*    (window_size.y < resize_thresh.y)) {*/
+    /*    rows = 6;*/
+    /*    cols = 1;*/
+    /*    plot_size.y = 2048;*/
+    /*}*/
     if (ImPlot::BeginSubplots(
             "Station Meteogram", rows, cols, plot_size,
             ImPlotSubplotFlags_LinkAllX | ImPlotSubplotFlags_ColMajor)) {
