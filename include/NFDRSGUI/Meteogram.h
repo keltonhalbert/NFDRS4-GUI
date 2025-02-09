@@ -2,6 +2,7 @@
 #define METEOGRAM_H
 
 #include <cstddef>
+#include <cstring>
 #include <memory>
 
 namespace nfdrs {
