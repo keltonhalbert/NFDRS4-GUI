@@ -143,8 +143,8 @@ class MainApp {
         m_window_flags = ImGuiWindowFlags_NoDecoration |
                          // ImGuiWindowFlags_NoMove |
                          ImGuiWindowFlags_NoSavedSettings;
-        /*m_dockspace_flags =*/
-        /*    ImGuiDockNodeFlags_HiddenTabBar | ImGuiDockNodeFlags_NoTabBar;*/
+        m_dockspace_flags = 0;
+        /*ImGuiDockNodeFlags_HiddenTabBar | ImGuiDockNodeFlags_NoTabBar;*/
 
         // get the viewport so we can fill it with our window
         m_main_viewport = ImGui::GetMainViewport();
