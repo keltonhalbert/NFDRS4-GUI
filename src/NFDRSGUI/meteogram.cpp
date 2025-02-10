@@ -310,19 +310,20 @@ static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
             ImPlot::PopStyleColor();
         }
         if (dfm_10h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(0.9));
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.85));
             ImPlot::PlotLine("10h fm", stime, dfm_10h.radial_moisture.get(), N);
             ImPlot::PopStyleColor();
         }
         if (dfm_100h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line,
-                                   ImPlot::SampleColormap(0.85));
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(0.8));
             ImPlot::PlotLine("100h fm", stime, dfm_100h.radial_moisture.get(),
                              N);
             ImPlot::PopStyleColor();
         }
         if (dfm_1000h.finished) {
-            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(0.8));
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.75));
             ImPlot::PlotLine("1000h fm", stime, dfm_1000h.radial_moisture.get(),
                              N);
             ImPlot::PopStyleColor();
