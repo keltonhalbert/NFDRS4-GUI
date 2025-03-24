@@ -98,6 +98,7 @@ void parse_uploaded_file(std::string const& filename,
                          std::string const& mime_type, std::string_view buffer,
                          void* callback_data = nullptr) {
     printf("Got a filename: %s\n", filename.c_str());
+    printf("MIME Type: %s\n", mime_type.c_str());
 }
 
 void MainApp::RenderLoop() {
@@ -227,7 +228,7 @@ void MainApp::RenderLoop() {
 
 #ifdef __EMSCRIPTEN__
         if (show_upload_window) {
-            emscripten_browser_file::upload("*.fw21", parse_uploaded_file);
+            emscripten_browser_file::upload(".fw21", parse_uploaded_file);
             show_upload_window = false;
         }
 #endif
