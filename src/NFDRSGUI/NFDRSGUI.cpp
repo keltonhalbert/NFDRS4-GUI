@@ -5,6 +5,11 @@
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten_browser_file.h>
+#endif
+
 #include <atomic>
 #include <ctime>
 #include <memory>
@@ -89,6 +94,12 @@ void firewx_category(Meteogram& met_data) {
     }
 }
 
+void parse_uploaded_file(std::string const& filename,
+                         std::string const& mime_type, std::string_view buffer,
+                         void* callback_data = nullptr) {
+    printf("Got a filename: %s\n", filename.c_str());
+}
+
 void MainApp::RenderLoop() {
     // Main loop
     ImGuiIO& io = ImGui::GetIO();
@@ -109,11 +120,6 @@ void MainApp::RenderLoop() {
         DeadFuelModelRunner(2.0, "100-hour", met_data);
     DeadFuelModelRunner dfm_1000hour =
         DeadFuelModelRunner(6.40, "1000-hour", met_data);
-
-    /*dfm_1hour.run(met_data);*/
-    /*dfm_10hour.run(met_data);*/
-    /*dfm_100hour.run(met_data);*/
-    /*dfm_1000hour.run(met_data);*/
 
     ImGuiID dockspace_id, dock_main_id;
 
@@ -172,6 +178,9 @@ void MainApp::RenderLoop() {
                                 &m_fps_idling.idling_enabled);
                 ImGui::EndMenu();
             }
+#ifdef __EMSCRIPTEN__
+            ImGui::MenuItem("Upload Data", nullptr, &show_upload_window);
+#endif
             if (ImGui::BeginMenu("Configure & Run")) {
                 ImGui::MenuItem("Dead Fuel Moisture Model", nullptr,
                                 &show_dead_fuel_settings);
@@ -215,6 +224,13 @@ void MainApp::RenderLoop() {
             live_fuel_settings(show_live_fuel_settings);
 
         if (show_nfdrs_settings) nfdrs_settings(show_nfdrs_settings);
+
+#ifdef __EMSCRIPTEN__
+        if (show_upload_window) {
+            emscripten_browser_file::upload("*.fw21", parse_uploaded_file);
+            show_upload_window = false;
+        }
+#endif
 
         /*ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);*/
         /*if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {*/

@@ -8,3 +8,6 @@
 [submodule "external/implot"]
 	path = external/implot
 	url = git@github.com:epezent/implot.git
+[submodule "external/emscripten-browser-file"]
+	path = external/emscripten-browser-file
+	url = git@github.com:Armchair-Software/emscripten-browser-file.git

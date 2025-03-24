@@ -74,6 +74,7 @@ target_include_directories(NFDRSGUI PUBLIC
     ${IMPLOT_DIR}
     ${IMGUI_DIR}/backends
     include
+    ./external/emscripten-browser-file/
     )
 target_link_libraries(NFDRSGUI PUBLIC ${LIBRARIES})
 
@@ -101,6 +102,8 @@ if(EMSCRIPTEN)
     "-sASSERTIONS=1"
     "-sDISABLE_EXCEPTION_CATCHING=1"
     "-sNO_FILESYSTEM=1"
+    "-sEXPORTED_RUNTIME_METHODS=[ccall]"
+    "-sEXPORTED_FUNCTIONS=[_main,_malloc,_free]"
   )
   set_target_properties(NFDRSGUI PROPERTIES OUTPUT_NAME "index")
   # copy our custom index.html to build directory

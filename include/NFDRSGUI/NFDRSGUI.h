@@ -79,6 +79,7 @@ class MainApp {
     bool show_dead_fuel_settings = false;
     bool show_live_fuel_settings = false;
     bool show_nfdrs_settings = false;
+    bool show_upload_window = false;
 
    public:
     MainApp() {
