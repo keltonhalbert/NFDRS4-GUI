@@ -51,6 +51,7 @@ add_executable( NFDRSGUI
     src/NFDRSGUI/main.cpp 
     src/NFDRSGUI/NFDRSGUI.cpp
     src/NFDRSGUI/meteogram.cpp
+    src/NFDRSGUI/FW21Decoder.cpp
     src/NFDRSGUI/nfdrs_settings.cpp
     src/NFDRSGUI/deadfuel_settings.cpp
     src/NFDRSGUI/livefuel_settings.cpp

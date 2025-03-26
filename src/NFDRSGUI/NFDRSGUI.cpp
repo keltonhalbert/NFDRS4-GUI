@@ -1,3 +1,4 @@
+#include <NFDRSGUI/FW21Decoder.h>
 #include <NFDRSGUI/Meteogram.h>
 #include <NFDRSGUI/ModelRunners.h>
 #include <NFDRSGUI/NFDRSGUI.h>
@@ -99,6 +100,9 @@ void parse_uploaded_file(std::string const& filename,
                          void* callback_data = nullptr) {
     printf("Got a filename: %s\n", filename.c_str());
     printf("MIME Type: %s\n", mime_type.c_str());
+    printf("DATA SIZE: %zu\n", buffer.size());
+
+    fw21::FW21Timeseries ts_data = fw21::decode_fw21(buffer);
 }
 
 void MainApp::RenderLoop() {
