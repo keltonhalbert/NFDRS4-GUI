@@ -88,7 +88,7 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
-        ImPlot::SetupAxes("UTC Time", "deg F");
+        ImPlot::SetupAxes("Local Time", "deg F");
         /*// This first subplot should not have labels*/
         ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);
         ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
@@ -148,7 +148,7 @@ static void surface_winds(const double stime[], const double wspd[],
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
-        ImPlot::SetupAxes("UTC Time", "WSPD (mph)");
+        ImPlot::SetupAxes("Local Time", "WSPD (mph)");
         ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);
         ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
 
@@ -216,7 +216,7 @@ static void solar_radiation_and_precip(const double stime[],
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
-        ImPlot::SetupAxes("UTC Time", "Solar Radiation (W m^-2)");
+        ImPlot::SetupAxes("Local Time", "Solar Radiation (W m^-2)");
         ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
 
         // X-axis constraints
@@ -274,7 +274,7 @@ static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
-        ImPlot::SetupAxes("UTC Time", "deg C");
+        ImPlot::SetupAxes("Local Time", "deg C");
         // This first subplot should not have labels
         ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);
         ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);

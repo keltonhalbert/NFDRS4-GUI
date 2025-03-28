@@ -27,6 +27,7 @@ std::time_t parse_datetime_to_unix_time(const std::string& datetime_str) {
 
     // Convert tm to time_t (UTC time)
     std::time_t utc_time = std::mktime(&tm);
+    std::time_t loc_time = std::mktime(&tm);
     if (utc_time == -1) {
         std::cerr << "Error converting tm to time_t." << std::endl;
         return -1;
@@ -51,12 +52,12 @@ std::time_t parse_datetime_to_unix_time(const std::string& datetime_str) {
     // Adjust the time based on the timezone offset
     int offset_seconds = (hours_offset * 3600) + (minutes_offset * 60);
     if (sign == '-') {
-        utc_time += offset_seconds;
+        loc_time -= offset_seconds;
     } else {
-        utc_time -= offset_seconds;
+        loc_time += offset_seconds;
     }
 
-    return utc_time;
+    return loc_time;
 }
 
 void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
