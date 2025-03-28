@@ -71,15 +71,12 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
         std::string element(buffer.substr(row_start, row_end - row_start));
         size_t idx;
         switch (row_idx) {
-            // station ID
-            case 0:
-                break;
-
             // Date-Time
             case 1: {
                 // handle converting string to UNIX timestamp
                 std::time_t unix_time = parse_datetime_to_unix_time(element);
                 ts_data.date_time.push_back(static_cast<double>(unix_time));
+                break;
             }
 
             // Temperature
@@ -87,6 +84,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.air_temperature.push_back(val);
+                break;
             }
 
             // Relative Humidity
@@ -94,6 +92,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.relative_humidity.push_back(val);
+                break;
             }
 
             // Precipitation
@@ -101,6 +100,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.precipitation.push_back(val);
+                break;
             }
 
             // Wind Speed
@@ -108,6 +108,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.wind_speed.push_back(val);
+                break;
             }
 
             // Wind Direction
@@ -115,6 +116,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.wind_direction.push_back(val);
+                break;
             }
 
             // Gust Speed
@@ -122,6 +124,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.gust_speed.push_back(val);
+                break;
             }
 
             // Gust Direction
@@ -129,12 +132,14 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.gust_direction.push_back(val);
+                break;
             }
 
             // Snow flag
             case 9: {
                 int val = (element != "") ? std::stoi(element, &idx) : 0;
                 ts_data.snow_flag.push_back(val);
+                break;
             }
 
             // Solar Radiation
@@ -142,10 +147,8 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
                 double val =
                     (element != "") ? std::stod(element, &idx) : std::nan("");
                 ts_data.solar_radiation.push_back(val);
-            }
-
-            default:
                 break;
+            }
         }
         row_start = row_end + 1;
         row_idx += 1;
@@ -176,6 +179,10 @@ FW21Timeseries FW21Timeseries::decode_fw21(std::string_view data_buffer) {
             data_buffer.remove_prefix(row_size + 1);
         }
     }
+
+    // parse the last row
+    std::string_view row(data_buffer.substr(0));
+    parse_row(ts_data, row);
 
     printf("Done!\n");
     return ts_data;

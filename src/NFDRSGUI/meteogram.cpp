@@ -7,6 +7,7 @@
 #include <ctime>
 #include <memory>
 
+#include "imgui.h"
 #include "implot.h"
 
 namespace nfdrs {
@@ -88,11 +89,11 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
-        ImPlot::SetupAxes("UTC Time", "deg C");
-        // This first subplot should not have labels
+        ImPlot::SetupAxes("UTC Time", "deg F");
+        /*// This first subplot should not have labels*/
         ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);
         ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
-        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 0, 35);
+        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 32, 100);
 
         // X-axis constraints
         ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, stime[0], stime[N - 1]);
@@ -100,14 +101,14 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
                                          stime[N - 1] - stime[0]);
 
         // Y-axis constraints
-        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, -10, 50);
-        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 5, 50);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, -10, 150);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 10, 80);
 
         // Set up a shared Y axis for relative humidity
         ImPlot::SetupAxis(ImAxis_Y2, "Relative Humidity (%)",
                           ImPlotAxisFlags_AuxDefault);
         ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 100);
-        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 100);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 105);
         ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 100);
 
         // Plot the fire-wx categories
@@ -144,24 +145,25 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
 
 static void surface_winds(const double stime[], const double wspd[],
                           const double wdir[], const double gust[],
-                          const int firewx_cat[], std::ptrdiff_t N) {
+                          /*const int firewx_cat[], */
+                          std::ptrdiff_t N) {
     if (ImPlot::BeginPlot("10m Winds")) {
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
         // Set up our plot axes and constraints
-        ImPlot::SetupAxes("UTC Time", "WSPD (m/s)");
+        ImPlot::SetupAxes("UTC Time", "WSPD (mph)");
         ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);
         ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
 
         // X-axis constraints
-        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 0, 20);
+        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 0, 100);
         ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, stime[0], stime[N - 1]);
         ImPlot::SetupAxisZoomConstraints(ImAxis_X1, 60 * 60 * 48,
                                          stime[N - 1] - stime[0]);
 
         // Y-axis constraints
-        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0, 50);
-        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 10, 50);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, 0, 100);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 10, 100);
 
         // Set up a shared Y axis for wind direction
         ImPlot::SetupAxis(ImAxis_Y2, "Wind Direction",
@@ -217,7 +219,7 @@ static void surface_winds(const double stime[], const double wspd[],
 static void solar_radiation_and_precip(const double stime[],
                                        const double srad[],
                                        const double precip[],
-                                       const int firewx_cat[],
+                                       /*const int firewx_cat[],*/
                                        std::ptrdiff_t N) {
     if (ImPlot::BeginPlot("Solar Radiation and Precipitation")) {
         // We want a 24 hour clock
@@ -237,11 +239,11 @@ static void solar_radiation_and_precip(const double stime[],
         ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 100, 1200);
 
         // Set up a shared Y axis for rainfall
-        ImPlot::SetupAxis(ImAxis_Y2, "Hourly Rainfall (mm)",
+        ImPlot::SetupAxis(ImAxis_Y2, "Hourly Rainfall (in)",
                           ImPlotAxisFlags_AuxDefault);
-        ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 20);
-        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 300);
-        ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 300);
+        ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 1);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 12);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 0.5, 12);
 
         // Plot the fire-wx categories
         /*ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);*/
@@ -407,18 +409,25 @@ void meteogram(const std::unique_ptr<fw21::FW21Timeseries>& ts_data,
             "Station Meteogram", rows, cols, plot_size,
             ImPlotSubplotFlags_LinkAllX | ImPlotSubplotFlags_ColMajor)) {
         if (ts_data) {
+            /*for (std::ptrdiff_t i = 0; i < ts_data->NT; ++i) {*/
+            /*    if (ts_data->date_time[i] == 0) {*/
+            /*        printf("IDX: %ld\t%f\t%f\t%f\n", i,
+             * ts_data->date_time[i],*/
+            /*               ts_data->air_temperature[i],*/
+            /*               ts_data->relative_humidity[i]);*/
+            /*    }*/
+            /*}*/
+
             temperature_and_humidity(
                 ts_data->date_time.data(), ts_data->air_temperature.data(),
                 ts_data->relative_humidity.data(), ts_data->NT);
+            surface_winds(ts_data->date_time.data(), ts_data->wind_speed.data(),
+                          ts_data->wind_direction.data(),
+                          ts_data->gust_speed.data(), ts_data->NT);
+            solar_radiation_and_precip(
+                ts_data->date_time.data(), ts_data->solar_radiation.data(),
+                ts_data->precipitation.data(), ts_data->NT);
         }
-        /*surface_winds(data.m_timestamp.get(), data.m_wspd.get(),*/
-        /*              data.m_wdir.get(), data.m_gust.get(),*/
-        /*              data.m_firewx_cat.get(), data.N);*/
-        /*solar_radiation_and_precip(data.m_timestamp.get(),
-         * data.m_srad.get(),*/
-        /*                           data.m_rain.get(),
-         * data.m_firewx_cat.get(),*/
-        /*                           data.N);*/
 
         /*dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h,
          * dfm_1000h,*/

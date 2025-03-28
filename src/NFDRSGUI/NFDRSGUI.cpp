@@ -4,6 +4,8 @@
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
 
+#include <cstddef>
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #include <emscripten_browser_file.h>
