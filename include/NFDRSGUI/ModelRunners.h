@@ -6,6 +6,7 @@
 #include <nfdrs4.h>
 
 #include <atomic>
+#include <cmath>
 #include <cstddef>
 #include <memory>
 #include <thread>
@@ -74,6 +75,13 @@ struct DeadFuelModelRunner {
             double rh = data.relative_humidity[i] / 100.0;
             double sW = data.solar_radiation[i];
             double rain = data.precipitation[i] * 2.54;  // convert to cm
+
+            if ((std::isnan(at)) || (std::isnan(rh)) || (std::isnan(sW)) ||
+                (std::isnan(rain))) {
+                radial_moisture[i] = std::nan("");
+                fuel_temperature[i] = std::nan("");
+                continue;
+            }
             tm time_data;
             ImPlotTime curtime = ImPlotTime::FromDouble(data.date_time[i]);
             ImPlot::GetGmtTime(curtime, &time_data);
