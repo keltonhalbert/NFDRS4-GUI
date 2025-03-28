@@ -53,7 +53,7 @@ add_executable( NFDRSGUI
     src/NFDRSGUI/meteogram.cpp
     src/NFDRSGUI/FW21Decoder.cpp
     src/NFDRSGUI/nfdrs_settings.cpp
-    src/NFDRSGUI/deadfuel_settings.cpp
+    #src/NFDRSGUI/deadfuel_settings.cpp
     src/NFDRSGUI/livefuel_settings.cpp
     ## Dear Imgui files
     ${IMGUI_DIR}/imgui.cpp

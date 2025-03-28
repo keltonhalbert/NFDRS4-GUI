@@ -4,6 +4,8 @@
 #include <chrono>
 #include <cmath>
 #include <cstddef>
+#include <memory>
+#include <string_view>
 
 #ifdef __EMSCRIPTEN__
 #include "emscripten_loop.h"
@@ -17,23 +19,25 @@
 #include "implot_internal.h"
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h>  // Will drag system OpenGL headers
-#include <NFDRSGUI/ModelRunners.h>
+/*#include <NFDRSGUI/ModelRunners.h>*/
+#include <NFDRSGUI/FW21Decoder.h>
 #include <NFDRSGUI/Style.h>
 
 namespace nfdrs {
 
-void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
-                        DeadFuelModelRunner& dfm_10h,
-                        DeadFuelModelRunner& dfm_100h,
-                        DeadFuelModelRunner& dfm_1000h, Meteogram& data);
+/*void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,*/
+/*                        DeadFuelModelRunner& dfm_10h,*/
+/*                        DeadFuelModelRunner& dfm_100h,*/
+/*                        DeadFuelModelRunner& dfm_1000h, Meteogram& data);*/
 
 void live_fuel_settings(bool& enabled);
 void nfdrs_settings(bool& enabled);
 
-void meteogram(const Meteogram& met_data, const DeadFuelModelRunner& dfm_1h,
-               const DeadFuelModelRunner& dfm_10h,
-               const DeadFuelModelRunner& dfm_100h,
-               const DeadFuelModelRunner& dfm_1000h,
+void meteogram(const std::unique_ptr<fw21::FW21Timeseries>& met_data,
+               /*const DeadFuelModelRunner& dfm_1h,*/
+               /*const DeadFuelModelRunner& dfm_10h,*/
+               /*const DeadFuelModelRunner& dfm_100h,*/
+               /*const DeadFuelModelRunner& dfm_1000h,*/
                const ImVec2 resize_thresh);
 
 static void glfw_error_callback(int error, const char* description) {

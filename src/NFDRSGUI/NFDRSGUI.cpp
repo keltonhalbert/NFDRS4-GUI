@@ -1,8 +1,6 @@
 #include <NFDRSGUI/FW21Decoder.h>
-#include <NFDRSGUI/Meteogram.h>
-#include <NFDRSGUI/ModelRunners.h>
+/*#include <NFDRSGUI/ModelRunners.h>*/
 #include <NFDRSGUI/NFDRSGUI.h>
-#include <NFDRSGUI/data.h>
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
 
@@ -88,21 +86,29 @@ int spc_fire_cat(double tair, double relh, double wspd) {
     return spc_cat;
 }
 
-void firewx_category(Meteogram& met_data) {
-    for (std::ptrdiff_t idx = 0; idx < met_data.N; ++idx) {
-        met_data.m_firewx_cat[idx] = spc_fire_cat(
-            met_data.m_tair[idx], met_data.m_relh[idx], met_data.m_wspd[idx]);
-    }
-}
+/*void firewx_category(Meteogram& met_data) {*/
+/*    for (std::ptrdiff_t idx = 0; idx < met_data.N; ++idx) {*/
+/*        met_data.m_firewx_cat[idx] = spc_fire_cat(*/
+/*            met_data.m_tair[idx], met_data.m_relh[idx],
+ * met_data.m_wspd[idx]);*/
+/*    }*/
+/*}*/
 
 void parse_uploaded_file(std::string const& filename,
                          std::string const& mime_type, std::string_view buffer,
                          void* callback_data = nullptr) {
-    printf("Got a filename: %s\n", filename.c_str());
-    printf("MIME Type: %s\n", mime_type.c_str());
-    printf("DATA SIZE: %zu\n", buffer.size());
+    if (!buffer.empty()) {
+        fw21::FW21Timeseries decoded =
+            fw21::FW21Timeseries::decode_fw21(buffer);
 
-    fw21::FW21Timeseries ts_data = fw21::decode_fw21(buffer);
+        if (callback_data != nullptr) {
+            auto* met_data_ptr =
+                static_cast<std::unique_ptr<fw21::FW21Timeseries>*>(
+                    callback_data);
+            *met_data_ptr =
+                std::make_unique<fw21::FW21Timeseries>(std::move(decoded));
+        }
+    }
 }
 
 void MainApp::RenderLoop() {
@@ -112,19 +118,21 @@ void MainApp::RenderLoop() {
     static bool show_imgui_demo = false;
     static bool show_helpmarkers = false;
 
-    static Meteogram met_data(timestamp, relh, tmpc, wspd, wdir, gust, rain,
-                              pres, srad, NSTATIC);
-    firewx_category(met_data);
+    std::unique_ptr<fw21::FW21Timeseries> met_data;
+
+    /*static Meteogram met_data(timestamp, relh, tmpc, wspd, wdir, gust, rain,*/
+    /*                          pres, srad, NSTATIC);*/
+    // firewx_category(met_data);
 
     // Dead Fuel Moisture models
-    DeadFuelModelRunner dfm_1hour =
-        DeadFuelModelRunner(0.20, "1-hour", met_data);
-    DeadFuelModelRunner dfm_10hour =
-        DeadFuelModelRunner(0.64, "10-hour", met_data);
-    DeadFuelModelRunner dfm_100hour =
-        DeadFuelModelRunner(2.0, "100-hour", met_data);
-    DeadFuelModelRunner dfm_1000hour =
-        DeadFuelModelRunner(6.40, "1000-hour", met_data);
+    /*DeadFuelModelRunner dfm_1hour =*/
+    /*    DeadFuelModelRunner(0.20, "1-hour", met_data);*/
+    /*DeadFuelModelRunner dfm_10hour =*/
+    /*    DeadFuelModelRunner(0.64, "10-hour", met_data);*/
+    /*DeadFuelModelRunner dfm_100hour =*/
+    /*    DeadFuelModelRunner(2.0, "100-hour", met_data);*/
+    /*DeadFuelModelRunner dfm_1000hour =*/
+    /*    DeadFuelModelRunner(6.40, "1000-hour", met_data);*/
 
     ImGuiID dockspace_id, dock_main_id;
 
@@ -215,15 +223,20 @@ void MainApp::RenderLoop() {
          * 0.0f));*/
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, 0)) {
-            meteogram(met_data, dfm_1hour, dfm_10hour, dfm_100hour,
-                      dfm_1000hour, m_layout_threshold);
+            meteogram(met_data,
+                      /*dfm_1hour, */
+                      /*dfm_10hour, */
+                      /*dfm_100hour,*/
+                      /*dfm_1000hour, */
+                      m_layout_threshold);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/
 
-        if (show_dead_fuel_settings)
-            dead_fuel_settings(show_dead_fuel_settings, dfm_1hour, dfm_10hour,
-                               dfm_100hour, dfm_1000hour, met_data);
+        /*if (show_dead_fuel_settings)*/
+        /*    dead_fuel_settings(show_dead_fuel_settings, dfm_1hour,
+         * dfm_10hour,*/
+        /*                       dfm_100hour, dfm_1000hour, met_data);*/
 
         if (show_live_fuel_settings)
             live_fuel_settings(show_live_fuel_settings);
@@ -232,16 +245,11 @@ void MainApp::RenderLoop() {
 
 #ifdef __EMSCRIPTEN__
         if (show_upload_window) {
-            emscripten_browser_file::upload(".fw21", parse_uploaded_file);
+            emscripten_browser_file::upload(".fw21", parse_uploaded_file,
+                                            static_cast<void*>(&met_data));
             show_upload_window = false;
         }
 #endif
-
-        /*ImGui::SetNextWindowDockID(dock_id_bottom_1, ImGuiCond_Once);*/
-        /*if (ImGui::Begin("Model Config", nullptr, m_window_flags)) {*/
-        /*    // pass*/
-        /*}*/
-        /*ImGui::End();*/
 
         // 1. Show the big demo window (Most of the sample code is in
         // ImGui::ShowDemoWindow()! You can browse its code to learn more

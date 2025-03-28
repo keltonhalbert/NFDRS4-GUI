@@ -1,7 +1,7 @@
 #ifndef MODEL_RUNNER_H
 #define MODEL_RUNNER_H
 
-#include <NFDRSGUI/Meteogram.h>
+#include <NFDRSGUI/FW21Decoder.h>
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
 

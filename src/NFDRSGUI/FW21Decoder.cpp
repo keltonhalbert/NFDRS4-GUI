@@ -79,6 +79,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
             case 1: {
                 // handle converting string to UNIX timestamp
                 std::time_t unix_time = parse_datetime_to_unix_time(element);
+                ts_data.date_time.push_back(static_cast<double>(unix_time));
             }
 
             // Temperature
@@ -151,7 +152,7 @@ void parse_row(FW21Timeseries& ts_data, const std::string_view buffer,
     }
 }
 
-FW21Timeseries decode_fw21(std::string_view data_buffer) {
+FW21Timeseries FW21Timeseries::decode_fw21(std::string_view data_buffer) {
     std::ptrdiff_t n_lines =
         std::count(data_buffer.begin(), data_buffer.end(), '\n');
     std::ptrdiff_t n_chars = data_buffer.size();
