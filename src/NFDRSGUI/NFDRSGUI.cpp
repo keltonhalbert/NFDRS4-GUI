@@ -72,30 +72,6 @@ bool ShallIdleThisFrame_Emscripten(FPSIdling& idling) {
     return shallIdleThisFrame;
 }
 
-int spc_fire_cat(double tair, double relh, double wspd) {
-    // Elevated -- 15 MPH
-    int spc_cat = 0;
-    if ((wspd >= 6.7056) && (relh <= 25) && (tair >= 7.2222)) {
-        spc_cat = 1;
-    }
-    if ((wspd >= 8.9408) && (relh <= 20) && (tair >= 10)) {
-        spc_cat = 2;
-    }
-    if ((wspd >= 13.4112) && (relh <= 15) && (tair >= 15.5556)) {
-        spc_cat = 3;
-    }
-
-    return spc_cat;
-}
-
-/*void firewx_category(Meteogram& met_data) {*/
-/*    for (std::ptrdiff_t idx = 0; idx < met_data.N; ++idx) {*/
-/*        met_data.m_firewx_cat[idx] = spc_fire_cat(*/
-/*            met_data.m_tair[idx], met_data.m_relh[idx],
- * met_data.m_wspd[idx]);*/
-/*    }*/
-/*}*/
-
 void parse_uploaded_file(std::string const& filename,
                          std::string const& mime_type, std::string_view buffer,
                          void* callback_data = nullptr) {
@@ -121,10 +97,7 @@ void MainApp::RenderLoop() {
     static bool show_helpmarkers = false;
 
     std::unique_ptr<fw21::FW21Timeseries> met_data;
-
-    /*static Meteogram met_data(timestamp, relh, tmpc, wspd, wdir, gust, rain,*/
-    /*                          pres, srad, NSTATIC);*/
-    // firewx_category(met_data);
+    std::unique_ptr<double[]> spc_cat;
 
     // Dead Fuel Moisture models
     /*DeadFuelModelRunner dfm_1hour =*/

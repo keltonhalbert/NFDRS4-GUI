@@ -21,6 +21,7 @@ struct FW21Timeseries {
         gust_speed.reserve(NT);
         gust_direction.reserve(NT);
         snow_flag.reserve(NT);
+        spc_cat.reserve(NT);
     }
 
     // move constructor
@@ -35,7 +36,10 @@ struct FW21Timeseries {
         gust_speed = std::move(other.gust_speed);
         gust_direction = std::move(other.gust_direction);
         snow_flag = std::move(other.snow_flag);
+        spc_cat = std::move(other.spc_cat);
     }
+
+    const std::ptrdiff_t NT;
 
     std::vector<double> date_time;
     std::vector<double> air_temperature;
@@ -48,8 +52,11 @@ struct FW21Timeseries {
     std::vector<double> gust_direction;
     std::vector<int> snow_flag;
 
-    const std::ptrdiff_t NT;
+    // derived stuff
+    std::vector<int> spc_cat;
+
     static FW21Timeseries decode_fw21(std::string_view data_buffer);
+    void calc_fire_cat();
 };
 
 }  // namespace fw21

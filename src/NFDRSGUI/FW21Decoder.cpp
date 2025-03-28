@@ -184,8 +184,29 @@ FW21Timeseries FW21Timeseries::decode_fw21(std::string_view data_buffer) {
     std::string_view row(data_buffer.substr(0));
     parse_row(ts_data, row);
 
-    printf("Done!\n");
+    ts_data.calc_fire_cat();
+
     return ts_data;
+}
+
+void FW21Timeseries::calc_fire_cat() {
+    for (std::ptrdiff_t idx = 0; idx < this->NT; ++idx) {
+        double wspd = this->wind_speed[idx];
+        double relh = this->relative_humidity[idx];
+        double tair = this->air_temperature[idx];
+        int spc_cat_val = 0;
+        if ((wspd >= 15) && (relh <= 25) && (tair >= 45)) {
+            spc_cat_val = 1;
+        }
+        if ((wspd >= 20) && (relh <= 20) && (tair >= 50)) {
+            spc_cat_val = 2;
+        }
+        if ((wspd >= 30) && (relh <= 15) && (tair >= 60)) {
+            spc_cat_val = 3;
+        }
+
+        this->spc_cat[idx] = spc_cat_val;
+    }
 }
 
 }  // namespace fw21

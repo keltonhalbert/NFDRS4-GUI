@@ -83,8 +83,7 @@ static void PlotFireWxCat(const char* label_id, const double* xs,
 
 static void temperature_and_humidity(const double stime[], const double tmpc[],
                                      const double relh[],
-                                     /*const int firewx_cat[], */
-                                     std::ptrdiff_t N) {
+                                     const int firewx_cat[], std::ptrdiff_t N) {
     if (ImPlot::BeginPlot("Air Temperature and Humidity")) {
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
@@ -112,13 +111,12 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
         ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 100);
 
         // Plot the fire-wx categories
-        /*ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);*/
-        /*ImVec4 elev_col = {1, 0.616, 0, 0.25};*/
-        /*ImVec4 crit_col = {0.831, 0, 0, 0.25};*/
-        /*ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};*/
-        /*PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 100},
-         * elev_col,*/
-        /*              crit_col, extr_col);*/
+        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
+        ImVec4 elev_col = {1, 0.616, 0, 0.25};
+        ImVec4 crit_col = {0.831, 0, 0, 0.25};
+        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};
+        PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 100}, elev_col,
+                      crit_col, extr_col);
 
         // Plot the Relative Humidity
         ImVec4 color = ImPlot::GetColormapColor(8, ImPlotColormap_BrBG);
@@ -145,8 +143,7 @@ static void temperature_and_humidity(const double stime[], const double tmpc[],
 
 static void surface_winds(const double stime[], const double wspd[],
                           const double wdir[], const double gust[],
-                          /*const int firewx_cat[], */
-                          std::ptrdiff_t N) {
+                          const int firewx_cat[], std::ptrdiff_t N) {
     if (ImPlot::BeginPlot("10m Winds")) {
         // We want a 24 hour clock
         ImPlot::GetStyle().Use24HourClock = true;
@@ -173,13 +170,12 @@ static void surface_winds(const double stime[], const double wspd[],
         ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 360, 360);
 
         // Plot the fire-wx categories
-        /*ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);*/
-        /*ImVec4 elev_col = {1, 0.616, 0, 0.25};*/
-        /*ImVec4 crit_col = {0.831, 0, 0, 0.25};*/
-        /*ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};*/
-        /*PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 100},
-         * elev_col,*/
-        /*              crit_col, extr_col);*/
+        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
+        ImVec4 elev_col = {1, 0.616, 0, 0.25};
+        ImVec4 crit_col = {0.831, 0, 0, 0.25};
+        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};
+        PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 100}, elev_col,
+                      crit_col, extr_col);
 
         // Plot the wind gust
         ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.5f);
@@ -201,16 +197,11 @@ static void surface_winds(const double stime[], const double wspd[],
         ImPlot::PopStyleVar();
 
         // Plot the wind direction
-        /*ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);*/
-        /*ImPlot::PushStyleColor(ImPlotCol_Line,
-         * ImVec4(1.0, 1.0, 1.0, 1.0));*/
         ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
         ImPlot::SetNextMarkerStyle(ImPlotMarker_Square, 2,
                                    ImPlot::GetColormapColor(1), IMPLOT_AUTO,
                                    ImPlot::GetColormapColor(1));
         ImPlot::PlotScatter("WDIR", stime, wdir, N);
-        /*ImPlot::PopStyleColor();*/
-        /*ImPlot::PopStyleVar();*/
 
         ImPlot::EndPlot();
     }
@@ -219,7 +210,7 @@ static void surface_winds(const double stime[], const double wspd[],
 static void solar_radiation_and_precip(const double stime[],
                                        const double srad[],
                                        const double precip[],
-                                       /*const int firewx_cat[],*/
+                                       const int firewx_cat[],
                                        std::ptrdiff_t N) {
     if (ImPlot::BeginPlot("Solar Radiation and Precipitation")) {
         // We want a 24 hour clock
@@ -246,13 +237,12 @@ static void solar_radiation_and_precip(const double stime[],
         ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 0.5, 12);
 
         // Plot the fire-wx categories
-        /*ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);*/
-        /*ImVec4 elev_col = {1, 0.616, 0, 0.25};*/
-        /*ImVec4 crit_col = {0.831, 0, 0, 0.25};*/
-        /*ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};*/
-        /*PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 1200},
-         * elev_col,*/
-        /*              crit_col, extr_col);*/
+        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
+        ImVec4 elev_col = {1, 0.616, 0, 0.25};
+        ImVec4 crit_col = {0.831, 0, 0, 0.25};
+        ImVec4 extr_col = {0.765, 0.086, 0.8, 0.25};
+        PlotFireWxCat("FireWx Cat", stime, firewx_cat, N, {0, 1200}, elev_col,
+                      crit_col, extr_col);
 
         // Plot the solar radiation
         ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.5f);
@@ -409,24 +399,18 @@ void meteogram(const std::unique_ptr<fw21::FW21Timeseries>& ts_data,
             "Station Meteogram", rows, cols, plot_size,
             ImPlotSubplotFlags_LinkAllX | ImPlotSubplotFlags_ColMajor)) {
         if (ts_data) {
-            /*for (std::ptrdiff_t i = 0; i < ts_data->NT; ++i) {*/
-            /*    if (ts_data->date_time[i] == 0) {*/
-            /*        printf("IDX: %ld\t%f\t%f\t%f\n", i,
-             * ts_data->date_time[i],*/
-            /*               ts_data->air_temperature[i],*/
-            /*               ts_data->relative_humidity[i]);*/
-            /*    }*/
-            /*}*/
-
-            temperature_and_humidity(
-                ts_data->date_time.data(), ts_data->air_temperature.data(),
-                ts_data->relative_humidity.data(), ts_data->NT);
+            temperature_and_humidity(ts_data->date_time.data(),
+                                     ts_data->air_temperature.data(),
+                                     ts_data->relative_humidity.data(),
+                                     ts_data->spc_cat.data(), ts_data->NT);
             surface_winds(ts_data->date_time.data(), ts_data->wind_speed.data(),
                           ts_data->wind_direction.data(),
-                          ts_data->gust_speed.data(), ts_data->NT);
-            solar_radiation_and_precip(
-                ts_data->date_time.data(), ts_data->solar_radiation.data(),
-                ts_data->precipitation.data(), ts_data->NT);
+                          ts_data->gust_speed.data(), ts_data->spc_cat.data(),
+                          ts_data->NT);
+            solar_radiation_and_precip(ts_data->date_time.data(),
+                                       ts_data->solar_radiation.data(),
+                                       ts_data->precipitation.data(),
+                                       ts_data->spc_cat.data(), ts_data->NT);
         }
 
         /*dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h,
