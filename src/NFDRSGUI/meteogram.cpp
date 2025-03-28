@@ -266,124 +266,110 @@ static void solar_radiation_and_precip(const double stime[],
     }
 }
 
-/*static void dead_fuel(const double stime[], const DeadFuelModelRunner&
- * dfm_1h,*/
-/*                      const DeadFuelModelRunner& dfm_10h,*/
-/*                      const DeadFuelModelRunner& dfm_100h,*/
-/*                      const DeadFuelModelRunner& dfm_1000h, std::ptrdiff_t N)
- * {*/
-/*    if (ImPlot::BeginPlot("Dead Fuels")) {*/
-/*        // We want a 24 hour clock*/
-/*        ImPlot::GetStyle().Use24HourClock = true;*/
-/*        // Set up our plot axes and constraints*/
-/*        ImPlot::SetupAxes("UTC Time", "deg C");*/
-/*        // This first subplot should not have labels*/
-/*        ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);*/
-/*        ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);*/
-/*        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 0, 35);*/
-/**/
-/*        // X-axis constraints*/
-/*        ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, stime[0], stime[N -
- * 1]);*/
-/*        ImPlot::SetupAxisZoomConstraints(ImAxis_X1, 60 * 60 * 48,*/
-/*                                         stime[N - 1] - stime[0]);*/
-/**/
-/*        // Y-axis constraints*/
-/*        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, -10, 50);*/
-/*        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 5, 50);*/
-/**/
-/*        // Set up a shared Y axis for relative humidity*/
-/*        ImPlot::SetupAxis(ImAxis_Y2, "Relative Humidity (%)",*/
-/*                          ImPlotAxisFlags_AuxDefault);*/
-/*        ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 100);*/
-/*        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 100);*/
-/*        ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 100);*/
-/**/
-/*        ImPlotColormap cmap = ImPlotColormap_BrBG;*/
-/*        ImPlot::PushColormap(cmap);*/
-/*        // Plot the Relative Humidity*/
-/*        ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);*/
-/*        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);*/
-/*        if (dfm_1h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,*/
-/*                                   ImPlot::SampleColormap(0.95));*/
-/*            ImPlot::PlotLine("1h fm", stime, dfm_1h.radial_moisture.get(),
-   N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        if (dfm_10h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,*/
-/*                                   ImPlot::SampleColormap(0.85));*/
-/*            ImPlot::PlotLine("10h fm", stime,
-   dfm_10h.radial_moisture.get(), N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        if (dfm_100h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,
-   ImPlot::SampleColormap(0.8));*/
-/*            ImPlot::PlotLine("100h fm", stime,
-   dfm_100h.radial_moisture.get(),*/
-/*                             N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        if (dfm_1000h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,*/
-/*                                   ImPlot::SampleColormap(0.75));*/
-/*            ImPlot::PlotLine("1000h fm", stime,
-   dfm_1000h.radial_moisture.get(),*/
-/*                             N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        ImPlot::PopStyleVar();*/
-/*        ImPlot::PopColormap();*/
-/**/
-/*        // Plot the fuel temperature*/
-/*        cmap = ImPlotColormap_RdBu;*/
-/*        ImPlot::PushColormap(cmap);*/
-/*        ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);*/
-/*        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);*/
-/*        if (dfm_1h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,
-   ImPlot::SampleColormap(.2));*/
-/*            ImPlot::PlotLine("1h ft", stime,
-   dfm_1h.fuel_temperature.get(), N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        if (dfm_10h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,
-   ImPlot::SampleColormap(.15));*/
-/*            ImPlot::PlotLine("10h ft", stime,
-   dfm_10h.fuel_temperature.get(),*/
-/*                             N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        if (dfm_100h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,
-   ImPlot::SampleColormap(.1));*/
-/*            ImPlot::PlotLine("100h ft", stime,
-   dfm_100h.fuel_temperature.get(),*/
-/*                             N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        if (dfm_1000h.finished) {*/
-/*            ImPlot::PushStyleColor(ImPlotCol_Line,*/
-/*                                   ImPlot::SampleColormap(0.05));*/
-/*            ImPlot::PlotLine("1000h ft", stime,*/
-/*                             dfm_1000h.fuel_temperature.get(), N);*/
-/*            ImPlot::PopStyleColor();*/
-/*        }*/
-/*        ImPlot::PopStyleVar();*/
-/*        ImPlot::PopColormap();*/
-/**/
-/*        ImPlot::EndPlot();*/
-/*    }*/
-/*}*/
+static void dead_fuel(const double stime[], const DeadFuelModelRunner& dfm_1h,
+                      const DeadFuelModelRunner& dfm_10h,
+                      const DeadFuelModelRunner& dfm_100h,
+                      const DeadFuelModelRunner& dfm_1000h, std::ptrdiff_t N) {
+    if (ImPlot::BeginPlot("Dead Fuels")) {
+        // We want a 24 hour clock
+        ImPlot::GetStyle().Use24HourClock = true;
+        // Set up our plot axes and constraints
+        ImPlot::SetupAxes("UTC Time", "deg C");
+        // This first subplot should not have labels
+        ImPlot::SetupAxis(ImAxis_X1, "", ImPlotAxisFlags_NoLabel);
+        ImPlot::SetupAxisScale(ImAxis_X1, ImPlotScale_Time);
+        ImPlot::SetupAxesLimits(stime[0], stime[N - 1], 0, 35);
+
+        // X-axis constraints
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_X1, stime[0], stime[N - 1]);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_X1, 60 * 60 * 48,
+                                         stime[N - 1] - stime[0]);
+
+        // Y-axis constraints
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y1, -10, 50);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y1, 5, 50);
+
+        // Set up a shared Y axis for relative humidity
+        ImPlot::SetupAxis(ImAxis_Y2, "Relative Humidity (%)",
+                          ImPlotAxisFlags_AuxDefault);
+        ImPlot::SetupAxisLimits(ImAxis_Y2, 0, 100);
+        ImPlot::SetupAxisLimitsConstraints(ImAxis_Y2, 0, 100);
+        ImPlot::SetupAxisZoomConstraints(ImAxis_Y2, 10, 100);
+
+        ImPlotColormap cmap = ImPlotColormap_BrBG;
+        ImPlot::PushColormap(cmap);
+        // Plot the Relative Humidity
+        ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
+        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y2);
+        if (dfm_1h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.95));
+            ImPlot::PlotLine("1h fm", stime, dfm_1h.radial_moisture.get(), N);
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_10h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.85));
+            ImPlot::PlotLine("10h fm", stime, dfm_10h.radial_moisture.get(), N);
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_100h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(0.8));
+            ImPlot::PlotLine("100h fm", stime, dfm_100h.radial_moisture.get(),
+                             N);
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_1000h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.75));
+            ImPlot::PlotLine("1000h fm", stime, dfm_1000h.radial_moisture.get(),
+                             N);
+            ImPlot::PopStyleColor();
+        }
+        ImPlot::PopStyleVar();
+        ImPlot::PopColormap();
+
+        // Plot the fuel temperature
+        cmap = ImPlotColormap_RdBu;
+        ImPlot::PushColormap(cmap);
+        ImPlot::PushStyleVar(ImPlotStyleVar_LineWeight, 1);
+        ImPlot::SetAxes(ImAxis_X1, ImAxis_Y1);
+        if (dfm_1h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(.2));
+            ImPlot::PlotLine("1h ft", stime, dfm_1h.fuel_temperature.get(), N);
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_10h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(.15));
+            ImPlot::PlotLine("10h ft", stime, dfm_10h.fuel_temperature.get(),
+                             N);
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_100h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::SampleColormap(.1));
+            ImPlot::PlotLine("100h ft", stime, dfm_100h.fuel_temperature.get(),
+                             N);
+            ImPlot::PopStyleColor();
+        }
+        if (dfm_1000h.finished) {
+            ImPlot::PushStyleColor(ImPlotCol_Line,
+                                   ImPlot::SampleColormap(0.05));
+            ImPlot::PlotLine("1000h ft", stime,
+                             dfm_1000h.fuel_temperature.get(), N);
+            ImPlot::PopStyleColor();
+        }
+        ImPlot::PopStyleVar();
+        ImPlot::PopColormap();
+
+        ImPlot::EndPlot();
+    }
+}
 
 void meteogram(const std::unique_ptr<fw21::FW21Timeseries>& ts_data,
-               /*const DeadFuelModelRunner& dfm_1h,*/
-               /*const DeadFuelModelRunner& dfm_10h,*/
-               /*const DeadFuelModelRunner& dfm_100h,*/
-               /*const DeadFuelModelRunner& dfm_1000h,*/
+               const DeadFuelModelRunner& dfm_1h,
+               const DeadFuelModelRunner& dfm_10h,
+               const DeadFuelModelRunner& dfm_100h,
+               const DeadFuelModelRunner& dfm_1000h,
                const ImVec2 resize_thresh) {
     const ImVec2 window_size = ImGui::GetWindowSize();
     ImVec2 plot_size = {-1, -1};
@@ -411,17 +397,14 @@ void meteogram(const std::unique_ptr<fw21::FW21Timeseries>& ts_data,
                                        ts_data->solar_radiation.data(),
                                        ts_data->precipitation.data(),
                                        ts_data->spc_cat.data(), ts_data->NT);
-        }
 
-        /*dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h,
-         * dfm_1000h,*/
-        /*          data.N);*/
-        /*dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h,
-         * dfm_1000h,*/
-        /*          data.N);*/
-        /*dead_fuel(data.m_timestamp.get(), dfm_1h, dfm_10h, dfm_100h,
-         * dfm_1000h,*/
-        /*          data.N);*/
+            dead_fuel(ts_data->date_time.data(), dfm_1h, dfm_10h, dfm_100h,
+                      dfm_1000h, ts_data->NT);
+            dead_fuel(ts_data->date_time.data(), dfm_1h, dfm_10h, dfm_100h,
+                      dfm_1000h, ts_data->NT);
+            dead_fuel(ts_data->date_time.data(), dfm_1h, dfm_10h, dfm_100h,
+                      dfm_1000h, ts_data->NT);
+        }
 
         ImPlot::EndSubplots();
     }

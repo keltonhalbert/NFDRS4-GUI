@@ -1,5 +1,5 @@
 #include <NFDRSGUI/FW21Decoder.h>
-/*#include <NFDRSGUI/ModelRunners.h>*/
+#include <NFDRSGUI/ModelRunners.h>
 #include <NFDRSGUI/NFDRSGUI.h>
 #include <deadfuelmoisture.h>
 #include <nfdrs4.h>
@@ -95,19 +95,15 @@ void MainApp::RenderLoop() {
     ImGuiStyle& style = ImGui::GetStyle();
     static bool show_imgui_demo = false;
     static bool show_helpmarkers = false;
+    static bool data_are_initialized = false;
 
     std::unique_ptr<fw21::FW21Timeseries> met_data;
-    std::unique_ptr<double[]> spc_cat;
 
     // Dead Fuel Moisture models
-    /*DeadFuelModelRunner dfm_1hour =*/
-    /*    DeadFuelModelRunner(0.20, "1-hour", met_data);*/
-    /*DeadFuelModelRunner dfm_10hour =*/
-    /*    DeadFuelModelRunner(0.64, "10-hour", met_data);*/
-    /*DeadFuelModelRunner dfm_100hour =*/
-    /*    DeadFuelModelRunner(2.0, "100-hour", met_data);*/
-    /*DeadFuelModelRunner dfm_1000hour =*/
-    /*    DeadFuelModelRunner(6.40, "1000-hour", met_data);*/
+    std::unique_ptr<DeadFuelModelRunner> dfm_1hour;
+    std::unique_ptr<DeadFuelModelRunner> dfm_10hour;
+    std::unique_ptr<DeadFuelModelRunner> dfm_100hour;
+    std::unique_ptr<DeadFuelModelRunner> dfm_1000hour;
 
     ImGuiID dockspace_id, dock_main_id;
 
@@ -137,16 +133,27 @@ void MainApp::RenderLoop() {
 
 #ifdef __EMSCRIPTEN__
         if (ShallIdleThisFrame_Emscripten(m_fps_idling)) return;
-#endif
 
         // Sleep if the window is minimized - don't do any unnecessary
         // computation or drawing!
-#ifndef __EMSCRIPTEN__
         if (glfwGetWindowAttrib(m_main_window, GLFW_ICONIFIED) != 0) {
             ImGui_ImplGlfw_Sleep(10);
             continue;
         }
 #endif
+
+        if ((met_data) && (!data_are_initialized)) {
+            dfm_1hour = std::make_unique<DeadFuelModelRunner>(0.20, "1-hour",
+                                                              *met_data);
+            dfm_10hour = std::make_unique<DeadFuelModelRunner>(0.64, "10-hour",
+                                                               *met_data);
+            dfm_100hour = std::make_unique<DeadFuelModelRunner>(2.0, "100-hour",
+                                                                *met_data);
+            dfm_1000hour = std::make_unique<DeadFuelModelRunner>(
+                6.40, "1000-hour", *met_data);
+
+            data_are_initialized = true;
+        }
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -198,20 +205,15 @@ void MainApp::RenderLoop() {
          * 0.0f));*/
         ImGui::SetNextWindowDockID(dock_main_id, ImGuiCond_Once);
         if (ImGui::Begin("Station Meteogram", nullptr, 0)) {
-            meteogram(met_data,
-                      /*dfm_1hour, */
-                      /*dfm_10hour, */
-                      /*dfm_100hour,*/
-                      /*dfm_1000hour, */
-                      m_layout_threshold);
+            meteogram(met_data, *dfm_1hour, *dfm_10hour, *dfm_100hour,
+                      *dfm_1000hour, m_layout_threshold);
         }
         ImGui::End();
         /*ImGui::PopStyleVar();*/
 
-        /*if (show_dead_fuel_settings)*/
-        /*    dead_fuel_settings(show_dead_fuel_settings, dfm_1hour,
-         * dfm_10hour,*/
-        /*                       dfm_100hour, dfm_1000hour, met_data);*/
+        if (show_dead_fuel_settings)
+            dead_fuel_settings(show_dead_fuel_settings, *dfm_1hour, *dfm_10hour,
+                               *dfm_100hour, *dfm_1000hour, *met_data);
 
         if (show_live_fuel_settings)
             live_fuel_settings(show_live_fuel_settings);

@@ -1,13 +1,14 @@
 
 #include <NFDRSGUI/NFDRSGUI.h>
 
+#include "NFDRSGUI/FW21Decoder.h"
 #include "NFDRSGUI/ModelRunners.h"
 #include "imgui.h"
 
 namespace nfdrs {
 
 static void individual_settings(const char* title, DeadFuelModelRunner& dfm,
-                                Meteogram& data) {
+                                fw21::FW21Timeseries& data) {
     if (ImGui::BeginTabItem(title)) {
         ImGui::PushItemWidth(ImGui::GetFontSize() * -15);
         ImGui::InputInt("Random Seed", &dfm.settings.random_seed);
@@ -44,7 +45,8 @@ static void individual_settings(const char* title, DeadFuelModelRunner& dfm,
 void dead_fuel_settings(bool& enabled, DeadFuelModelRunner& dfm_1h,
                         DeadFuelModelRunner& dfm_10h,
                         DeadFuelModelRunner& dfm_100h,
-                        DeadFuelModelRunner& dfm_1000h, Meteogram& data) {
+                        DeadFuelModelRunner& dfm_1000h,
+                        fw21::FW21Timeseries& data) {
     const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(
         ImVec2(main_viewport->WorkPos.x + 100, main_viewport->WorkPos.y + 20),

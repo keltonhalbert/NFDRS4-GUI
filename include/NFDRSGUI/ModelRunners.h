@@ -44,9 +44,11 @@ struct DeadFuelModelRunner {
     const std::ptrdiff_t size;
     bool finished = false;
 
+    DeadFuelModelRunner();
+
     DeadFuelModelRunner(double in_radius, const char* in_name,
-                        const Meteogram& data)
-        : size(data.N), process_thread() {
+                        const fw21::FW21Timeseries& data)
+        : size(data.NT), process_thread() {
         radius = in_radius;
         name = in_name;
         model = std::make_unique<DeadFuelMoisture>(radius, name);
@@ -65,14 +67,15 @@ struct DeadFuelModelRunner {
         if (process_thread.joinable()) process_thread.join();
     }
 
-    void calc_dfm(const Meteogram& data) {
-        for (int i = 0; i < data.N; ++i) {
-            double at = data.m_tair[i];
-            double rh = data.m_relh[i] / 100.0;
-            double sW = data.m_srad[i];
-            double rain = data.m_rain[i] * 10.0;
+    void calc_dfm(const fw21::FW21Timeseries& data) {
+        for (int i = 0; i < data.NT; ++i) {
+            double at = (data.air_temperature[i] - 32.0) *
+                        (5. / 9.);  // convert to deg C
+            double rh = data.relative_humidity[i] / 100.0;
+            double sW = data.solar_radiation[i];
+            double rain = data.precipitation[i] * 2.54;  // convert to cm
             tm time_data;
-            ImPlotTime curtime = ImPlotTime::FromDouble(data.m_timestamp[i]);
+            ImPlotTime curtime = ImPlotTime::FromDouble(data.date_time[i]);
             ImPlot::GetGmtTime(curtime, &time_data);
 
             bool ret = model->update(
@@ -81,12 +84,12 @@ struct DeadFuelModelRunner {
                 time_data.tm_sec, at, rh, sW, rain, 0.0218, true);
             radial_moisture[i] = model->medianRadialMoisture() * 100.0;
             fuel_temperature[i] = model->meanWtdTemperature();
-            progress.store(100 * i / data.N);
+            progress.store(100 * i / data.NT);
         }
         finished = true;
     }
 
-    void run(const Meteogram& data) {
+    void run(const fw21::FW21Timeseries& data) {
         model->setRandomSeed(settings.random_seed);
         model->setDiffusivitySteps(settings.diffusivity_steps);
         model->setMoistureSteps(settings.moisture_steps);
